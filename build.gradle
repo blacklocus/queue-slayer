@@ -1,0 +1,25 @@
+apply plugin: 'idea'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+ext {
+    deps = [
+
+            commons_lang3: 'org.apache.commons:commons-lang3:3.1',
+            guava: 'com.google.guava:guava:15.0',
+
+            slf4j_api: 'org.slf4j:slf4j-api:1.7.5',
+
+            aws_java_sdk: 'com.amazonaws:aws-java-sdk:1.6.8'
+
+    ]
+}
+
+

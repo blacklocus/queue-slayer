@@ -1,0 +1,8 @@
+dependencies {
+
+    compile deps.commons_lang3
+    compile deps.guava
+
+    compile deps.slf4j_api
+
+}
