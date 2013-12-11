@@ -2,7 +2,7 @@
 *.iml
 *.iws
 /.gradle/
-/build/
+build/
 /out/
 *.swp
 
