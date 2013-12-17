@@ -41,7 +41,7 @@ public class QueueReader<Q, T, R> extends ExceptingRunnable {
      */
     public static final long DEFAULT_SLEEP_MS = 20 * 1000;
 
-    protected QueueItemProvider<Q> queueItemProvider;
+    protected Iterable<Collection<Q>> queueItemProvider;
     protected QueueItemHandler<Q, T, R> handler;
     protected ExecutorService executor;
     protected long sleepMs;
@@ -53,7 +53,7 @@ public class QueueReader<Q, T, R> extends ExceptingRunnable {
      * @param handler  handler implementation to convert and process messages
      * @param executor executor service used for forking message handler processing
      */
-    public QueueReader(QueueItemProvider<Q> provider,
+    public QueueReader(Iterable<Collection<Q>> provider,
                        QueueItemHandler<Q, T, R> handler,
                        ExecutorService executor) {
         this(provider, handler, executor, DEFAULT_SLEEP_MS);
@@ -67,7 +67,7 @@ public class QueueReader<Q, T, R> extends ExceptingRunnable {
      * @param executor executor service used for forking message handler processing
      * @param sleepMs  how long to sleep in ms between reads from the queue where no messages are returned
      */
-    public QueueReader(QueueItemProvider<Q> provider,
+    public QueueReader(Iterable<Collection<Q>> provider,
                        QueueItemHandler<Q, T, R> handler,
                        ExecutorService executor,
                        long sleepMs) {
