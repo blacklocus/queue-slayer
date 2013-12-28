@@ -88,6 +88,12 @@ subprojects {
         manifest = defaultManifest()
     }
 
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from 'build/docs/javadoc'
+        manifest = defaultManifest()
+    }
+
     task sourcesJar(type: Jar) {
         classifier = 'sources'
         from sourceSets.main.allSource
@@ -96,6 +102,7 @@ subprojects {
 
     artifacts {
         archives jar
+        archives javadocJar
         archives sourcesJar
     }
 
