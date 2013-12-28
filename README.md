@@ -1,3 +1,5 @@
+(incubating...)
+
 queue-slayer
 ============
 A micro pattern for thread-parallelized processing of messages off of a queue.
