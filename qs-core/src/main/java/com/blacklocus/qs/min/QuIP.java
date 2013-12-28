@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blacklocus.qs;
+package com.blacklocus.qs.min;
+
+import com.blacklocus.qs.QueueItemProvider;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * More generalized version of {@link MessageProvider}
+ * Identical to {@link QueueItemProvider} but much shorter class name.
  *
  * @author Jason Dunkelberger (dirkraft)
  */
-public interface QueueItemProvider<Q> extends Iterator<Collection<Q>>, Iterable<Collection<Q>> {
+public interface QuIP<Q> extends Iterator<Collection<Q>>, Iterable<Collection<Q>> {
 
     /**
      * Generally returns <code>this</code>. QueueItemProviders are not generally reusable/resettable since the
