@@ -116,6 +116,7 @@ subprojects {
     }
 
     uploadArchives {
+        dependsOn licenseFormatMain, licenseFormatTest
         repositories.mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 

@@ -15,6 +15,9 @@
  */
 package com.blacklocus.qs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Arrays;
@@ -23,6 +26,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -30,10 +34,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ExternalQueueItemProvider<Q> implements QueueItemProvider<Q>, Closeable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ExternalQueueItemProvider.class);
+
     private final SynchronousQueue<Q> q = new SynchronousQueue<Q>(true);
     private final List<Q> empty = Collections.emptyList();
 
     private final AtomicBoolean alive = new AtomicBoolean(true);
+
+    private final Long pollTimeout;
+    private final TimeUnit pollTimeUnit;
+
+    public ExternalQueueItemProvider() {
+        this(null, null);
+    }
+
+    public ExternalQueueItemProvider(Long pollTimeout, TimeUnit pollTimeUnit) {
+        this.pollTimeout = pollTimeout;
+        this.pollTimeUnit = pollTimeUnit;
+    }
 
     @Override
     public Iterator<Collection<Q>> iterator() {
@@ -48,7 +66,17 @@ public class ExternalQueueItemProvider<Q> implements QueueItemProvider<Q>, Close
     @SuppressWarnings("unchecked")
     @Override
     public List<Q> next() {
-        Q q = this.q.poll();
+        Q q = null;
+        try {
+            q = pollTimeout == null ? this.q.poll() : this.q.poll(pollTimeout, pollTimeUnit);
+        } catch (InterruptedException e) {
+            LOG.info("Provider interrupted. Closing immediately.", e);
+            try {
+                close();
+            } catch (IOException e1) {
+                throw new RuntimeException(e);
+            }
+        }
         return q == null ? empty : Arrays.asList(q); // meh, no batching
     }
 
