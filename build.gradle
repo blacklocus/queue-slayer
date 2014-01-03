@@ -25,21 +25,18 @@ def defaultBlank(closure) {
 ext {
     deps = [
 
+            aws_java_sdk: 'com.amazonaws:aws-java-sdk:1.6.8',
             commons_lang3: 'org.apache.commons:commons-lang3:3.1',
             commons_configuration: 'commons-configuration:commons-configuration:1.10',
-            guava: 'com.google.guava:guava:15.0',
-            moar_concurrent: 'com.github.rholder:moar-concurrent:1.0.2',
             fauxflake_core: 'com.github.rholder.fauxflake:fauxflake-core:1.0.0',
+            guava: 'com.google.guava:guava:15.0',
             jackson_core_asl: 'org.codehaus.jackson:jackson-core-asl:1.9.13',
             jackson_mapper_asl: 'org.codehaus.jackson:jackson-mapper-asl:1.9.13',
             jres: 'com.blacklocus:jres:0.1.1-SNAPSHOT',
-
-            slf4j_api: 'org.slf4j:slf4j-api:1.7.5',
-
-            aws_java_sdk: 'com.amazonaws:aws-java-sdk:1.6.8',
-
+            jres_test: 'com.blacklocus:jres-test:0.1.1-SNAPSHOT',
             junit: 'junit:junit:4.11',
-            jres_test: 'com.blacklocus:jres-test:0.1.1-SNAPSHOT'
+            moar_concurrent: 'com.github.rholder:moar-concurrent:1.0.2',
+            slf4j_api: 'org.slf4j:slf4j-api:1.7.5',
 
     ]
 }
