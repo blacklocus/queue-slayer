@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,10 +35,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ExternalQueueItemProvider<Q> implements QueueItemProvider<Q>, Closeable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExternalQueueItemProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(com.blacklocus.qs.ExternalQueueItemProvider.class);
 
-    private final SynchronousQueue<Q> q = new SynchronousQueue<Q>(true);
-    private final List<Q> empty = Collections.emptyList();
+    private final BlockingQueue<Q> q;
 
     private final AtomicBoolean alive = new AtomicBoolean(true);
 
@@ -49,6 +49,11 @@ public class ExternalQueueItemProvider<Q> implements QueueItemProvider<Q>, Close
     }
 
     public ExternalQueueItemProvider(Long pollTimeout, TimeUnit pollTimeUnit) {
+        this(new SynchronousQueue<Q>(true), pollTimeout, pollTimeUnit);
+    }
+
+    public ExternalQueueItemProvider(BlockingQueue<Q> queue, Long pollTimeout, TimeUnit pollTimeUnit) {
+        this.q = queue;
         this.pollTimeout = pollTimeout;
         this.pollTimeUnit = pollTimeUnit;
     }
@@ -77,7 +82,7 @@ public class ExternalQueueItemProvider<Q> implements QueueItemProvider<Q>, Close
                 throw new RuntimeException(e);
             }
         }
-        return q == null ? empty : Arrays.asList(q); // meh, no batching
+        return q == null ? Collections.<Q>emptyList() : Arrays.asList(q); // meh, no batching
     }
 
     @Override

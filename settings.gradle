@@ -1,1 +1,1 @@
-include 'qs-aws', 'qs-core'
+include 'qs-aws', 'qs-core', 'qs-worker-core'
