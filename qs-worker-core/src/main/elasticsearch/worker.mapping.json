@@ -1,0 +1,7 @@
+{
+  "worker": {
+    "_timestamp": {
+      "enabled": true
+    }
+  }
+}

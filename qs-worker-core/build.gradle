@@ -1,3 +1,11 @@
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/main/elasticsearch'
+        }
+    }
+}
+
 dependencies {
 
     compile project(':qs-core')
@@ -6,5 +14,6 @@ dependencies {
     compile deps.jackson_core_asl
     compile deps.jackson_mapper_asl
     compile deps.moar_concurrent
+    compile deps.fauxflake_core
 
 }

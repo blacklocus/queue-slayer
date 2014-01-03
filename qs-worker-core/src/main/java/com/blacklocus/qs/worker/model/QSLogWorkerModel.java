@@ -15,41 +15,20 @@
  */
 package com.blacklocus.qs.worker.model;
 
-import java.util.Map;
-
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public class QSLogTaskModel {
-
-    public String batchId;
-
-    public String taskId;
+public class QSLogWorkerModel {
 
     public String workerId;
 
-    public Long started;
+    public Long tick;
 
-    public Long finished;
-
-    public Long elapsed;
-
-    public Boolean finishedHappy;
-
-    public Map<?, ?> params;
-
-    public QSLogTaskModel() {
+    public QSLogWorkerModel() {
     }
 
-    public QSLogTaskModel(String batchId, String taskId, String workerId, Long started, Long finished, Long elapsed,
-                          Boolean finishedHappy, Map<?, ?> params) {
-        this.batchId = batchId;
-        this.taskId = taskId;
+    public QSLogWorkerModel(String workerId, Long tick) {
         this.workerId = workerId;
-        this.started = started;
-        this.finished = finished;
-        this.elapsed = elapsed;
-        this.finishedHappy = finishedHappy;
-        this.params = params;
+        this.tick = tick;
     }
 }
