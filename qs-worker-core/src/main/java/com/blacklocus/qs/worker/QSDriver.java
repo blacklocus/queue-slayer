@@ -54,8 +54,10 @@ public class QSDriver extends ExceptingRunnable implements Iterable<Collection<Q
                 QSConfig.HEAP_STRATEGY_TRIGGER, QSConfig.HEAP_STRATEGY_MAX_DELAY, QSConfig.HEAP_STRATEGY_HINT);
     }
 
-    public void register(String handlerName, QSWorker worker) {
-        this.workers.put(handlerName, worker);
+    public void register(QSWorker... workers) {
+        for (QSWorker worker : workers) {
+            this.workers.put(worker.getHandlerName(), worker);
+        }
     }
 
     @Override

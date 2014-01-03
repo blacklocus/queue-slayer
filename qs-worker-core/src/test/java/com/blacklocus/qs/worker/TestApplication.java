@@ -5,6 +5,7 @@ import com.blacklocus.qs.worker.simple.BlockingQueueQSTaskService;
 import com.blacklocus.qs.worker.simple.SystemOutQSLogService;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.lang.math.RandomUtils;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -15,49 +16,57 @@ import java.util.concurrent.SynchronousQueue;
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public class TestApplication {
+public class TestApplication implements Runnable {
 
-    public static void main(String[] args) {
-        BlockingQueue<QSTaskModel> numbersMan = new SynchronousQueue<QSTaskModel>();
+    BlockingQueue<QSTaskModel> numbersMan = new SynchronousQueue<QSTaskModel>();
 
+    @Override
+    public void run() {
         // simulated work
         ExecutorService executorService = Executors.newCachedThreadPool();
-        executorService.submit(new TaskGenerator(numbersMan, TestWorkerPrintIdentity.HANDLER_NAME));
-        executorService.submit(new TaskGenerator(numbersMan, TestWorkerPrintSquare.HANDLER_NAME));
-        executorService.submit(new TaskGenerator(numbersMan, TestWorkerPrintZero.HANDLER_NAME));
+        executorService.submit(new TaskGenerator());
 
         // actual qs-worker API
         QSDriver qsDriver = new QSDriver(new BlockingQueueQSTaskService(numbersMan), new SystemOutQSLogService());
-        qsDriver.register(TestWorkerPrintIdentity.HANDLER_NAME, new TestWorkerPrintIdentity());
-        qsDriver.register(TestWorkerPrintSquare.HANDLER_NAME, new TestWorkerPrintSquare());
-        qsDriver.register(TestWorkerPrintZero.HANDLER_NAME, new TestWorkerPrintZero());
+        qsDriver.register(new TestWorkerPrintIdentity(), new TestWorkerPrintSquare(), new TestWorkerPrintZero(), new TestWorkerUnmotivated());
         qsDriver.run();
     }
 
-}
-
-class TaskGenerator implements Callable<Void> {
-    final BlockingQueue<QSTaskModel> q;
-    final String handler;
-
-    TaskGenerator(BlockingQueue<QSTaskModel> q, String handler) {
-        this.q = q;
-        this.handler = handler;
+    public static void main(String[] args) {
+        new TestApplication().run();
     }
 
-    @Override
-    public Void call() throws Exception {
-        while (!Thread.interrupted()) {
-            q.put(new QSTaskModel(null, "" + System.currentTimeMillis(), handler, ImmutableMap.of("value", 2)));
-            Thread.sleep(1000L);
+    class TaskGenerator implements Callable<Void> {
+        @Override
+        public Void call() throws Exception {
+            while (!Thread.interrupted()) {
+                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), ImmutableMap.of("value", 2)));
+                Thread.sleep(1000L);
+            }
+            return null;
         }
-        return null;
+
+        String[] WORKER_NAMES = {
+                TestWorkerPrintIdentity.HANDLER_NAME,
+                TestWorkerPrintSquare.HANDLER_NAME,
+                TestWorkerPrintZero.HANDLER_NAME,
+                TestWorkerUnmotivated.HANDLER_NAME
+        };
+
+        String randomHandler() {
+            return WORKER_NAMES[RandomUtils.nextInt(WORKER_NAMES.length)];
+        }
     }
 }
 
 class TestWorkerPrintIdentity implements QSWorker {
 
     public static final String HANDLER_NAME = "identity";
+
+    @Override
+    public String getHandlerName() {
+        return HANDLER_NAME;
+    }
 
     @Override
     public Object undertake(Configuration params, QSTaskLogger taskLogger) {
@@ -71,6 +80,11 @@ class TestWorkerPrintSquare implements QSWorker {
     public static final String HANDLER_NAME = "square";
 
     @Override
+    public String getHandlerName() {
+        return HANDLER_NAME;
+    }
+
+    @Override
     public Object undertake(Configuration params, QSTaskLogger taskLogger) {
         System.out.println(Math.pow((double) params.getInt("value"), 2));
         return null;
@@ -82,8 +96,29 @@ class TestWorkerPrintZero implements QSWorker {
     public static final String HANDLER_NAME = "zero";
 
     @Override
+    public String getHandlerName() {
+        return HANDLER_NAME;
+    }
+
+    @Override
     public Object undertake(Configuration params, QSTaskLogger taskLogger) {
         System.out.println(0);
+        return null;
+    }
+}
+
+class TestWorkerUnmotivated implements QSWorker {
+
+    public static final String HANDLER_NAME = "unmotivated";
+
+    @Override
+    public String getHandlerName() {
+        return HANDLER_NAME;
+    }
+
+    @Override
+    public Object undertake(Configuration params, QSTaskLogger taskLogger) {
+        taskLogger.log("This is dum.");
         return null;
     }
 }

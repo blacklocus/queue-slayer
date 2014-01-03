@@ -7,6 +7,8 @@ import org.apache.commons.configuration.Configuration;
  */
 public interface QSWorker {
 
+    String getHandlerName();
+
     Object undertake(Configuration params, QSTaskLogger taskLogger);
 
 }
