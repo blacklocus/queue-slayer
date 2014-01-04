@@ -28,12 +28,15 @@ import com.github.rholder.moar.concurrent.QueueingStrategy;
 import com.github.rholder.moar.concurrent.StrategicExecutors;
 import com.github.rholder.moar.concurrent.thread.CallerBlocksPolicy;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -60,16 +63,30 @@ public class QSDriver extends ExceptingRunnable implements Iterable<Collection<T
     private final Map<String, QSWorker> workers = new HashMap<String, QSWorker>();
 
     public QSDriver(QSTaskService taskService, QSLogService logService) {
+        this(taskService, logService, new MapConfiguration(Collections.<String, Object>emptyMap()));
+    }
+
+    public QSDriver(QSTaskService taskService, QSLogService logService, Configuration configuration) {
         this.taskService = taskService;
         this.logService = logService;
+        CompositeConfiguration cfg = new CompositeConfiguration();
+        cfg.addConfiguration(configuration);
+        cfg.addConfiguration(QSConfig.DEFAULTS);
 
         this.workerExecutorService = StrategicExecutors.newBalancingThreadPoolExecutor(
-                new ThreadPoolExecutor(QSConfig.WORKER_POOL_CORE, QSConfig.WORKER_POOL_MAX, 1, TimeUnit.MINUTES,
-                        new SynchronousQueue<Runnable>(), new CallerBlocksPolicy()),
-                QSConfig.WORKER_POOL_UTILIZATION, DEFAULT_SMOOTHING_WEIGHT, DEFAULT_BALANCE_AFTER
+                new ThreadPoolExecutor(
+                        cfg.getInt(QSConfig.PROP_WORKER_POOL_CORE),
+                        cfg.getInt(QSConfig.PROP_WORKER_POOL_MAX),
+                        1, TimeUnit.MINUTES,
+                        new SynchronousQueue<Runnable>(), new CallerBlocksPolicy()
+                ),
+                cfg.getFloat(QSConfig.PROP_WORKER_POOL_UTILIZATION), DEFAULT_SMOOTHING_WEIGHT, DEFAULT_BALANCE_AFTER
         );
         this.heapBasedDelayStrategy = QueueingStrategies.newHeapQueueingStrategy(
-                QSConfig.HEAP_STRATEGY_TRIGGER, QSConfig.HEAP_STRATEGY_MAX_DELAY, QSConfig.HEAP_STRATEGY_HINT);
+                cfg.getDouble(QSConfig.PROP_HEAP_STRATEGY_TRIGGER),
+                cfg.getLong(QSConfig.PROP_HEAP_STRATEGY_MAX_DELAY),
+                cfg.getLong(QSConfig.PROP_HEAP_STRATEGY_HINT)
+        );
     }
 
     public QSDriver register(QSWorker... workers) {

@@ -15,17 +15,39 @@
  */
 package com.blacklocus.qs.worker.config;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.MapConfiguration;
+
+import java.util.HashMap;
+
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
 public class QSConfig {
 
-    public static final int WORKER_POOL_CORE = 0;
-    public static final int WORKER_POOL_MAX = 1000;
-    public static final float WORKER_POOL_UTILIZATION = 0.9f;
+    public static final Configuration DEFAULTS = new MapConfiguration(new HashMap<String, Object>());
 
-    public static final double HEAP_STRATEGY_TRIGGER = 0.95;
-    public static final long HEAP_STRATEGY_MAX_DELAY = 60 * 1000;
-    public static final long HEAP_STRATEGY_HINT = Runtime.getRuntime().maxMemory() / (10 * 1024 * 1024);
+    public static final String PROP_WORKER_POOL_CORE = "qs.workerPool.core";
+    public static final int DEF_WORKER_POOL_CORE = 0;
+    public static final String PROP_WORKER_POOL_MAX = "qs.workerPool.max";
+    public static final int DEF_WORKER_POOL_MAX = 1000;
+    public static final String PROP_WORKER_POOL_UTILIZATION = "qs.workerPool.utilization";
+    public static final float DEF_WORKER_POOL_UTILIZATION = 0.9f;
+    static {
+        DEFAULTS.setProperty(PROP_WORKER_POOL_CORE, DEF_WORKER_POOL_CORE);
+        DEFAULTS.setProperty(PROP_WORKER_POOL_MAX, DEF_WORKER_POOL_MAX);
+        DEFAULTS.setProperty(PROP_WORKER_POOL_UTILIZATION, DEF_WORKER_POOL_UTILIZATION);
+    }
 
+    public static final String PROP_HEAP_STRATEGY_TRIGGER = "qs.heapStrategy.trigger";
+    public static final double DEF_HEAP_STRATEGY_TRIGGER = 0.95;
+    public static final String PROP_HEAP_STRATEGY_MAX_DELAY = "qs.heapStrategy.maxDelay";
+    public static final long DEF_HEAP_STRATEGY_MAX_DELAY = 60 * 1000;
+    public static final String PROP_HEAP_STRATEGY_HINT = "qs.heapStrategy.hint";
+    public static final long DEF_HEAP_STRATEGY_HINT = Runtime.getRuntime().maxMemory() / (10 * 1024 * 1024);
+    static {
+        DEFAULTS.setProperty(PROP_HEAP_STRATEGY_TRIGGER, DEF_HEAP_STRATEGY_TRIGGER);
+        DEFAULTS.setProperty(PROP_HEAP_STRATEGY_MAX_DELAY, DEF_HEAP_STRATEGY_MAX_DELAY);
+        DEFAULTS.setProperty(PROP_HEAP_STRATEGY_HINT, DEF_HEAP_STRATEGY_HINT);
+    }
 }
