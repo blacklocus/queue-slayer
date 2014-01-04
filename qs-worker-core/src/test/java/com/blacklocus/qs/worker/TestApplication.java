@@ -18,6 +18,7 @@ package com.blacklocus.qs.worker;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.simple.BlockingQueueQSTaskService;
 import com.blacklocus.qs.worker.simple.SystemOutQSLogService;
+import com.blacklocus.qs.worker.util.QSProcessBuilder;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.math.RandomUtils;
@@ -42,9 +43,12 @@ public class TestApplication implements Runnable {
         executorService.submit(new TaskGenerator());
 
         // actual qs-worker API
-        QSDriver qsDriver = new QSDriver(new BlockingQueueQSTaskService(numbersMan), new SystemOutQSLogService());
-        qsDriver.register(new TestWorkerPrintIdentity(), new TestWorkerPrintSquare(), new TestWorkerPrintZero(), new TestWorkerUnmotivated());
-        qsDriver.run();
+        new QSProcessBuilder()
+                .taskServices(new BlockingQueueQSTaskService(numbersMan))
+                .logService(new SystemOutQSLogService())
+                .workers(new TestWorkerPrintIdentity(), new TestWorkerPrintSquare(), new TestWorkerPrintZero(), new TestWorkerUnmotivated())
+                .build()
+                .run();
     }
 
     public static void main(String[] args) {

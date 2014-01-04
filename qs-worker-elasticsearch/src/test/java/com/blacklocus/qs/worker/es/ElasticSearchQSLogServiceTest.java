@@ -35,8 +35,8 @@ public class ElasticSearchQSLogServiceTest extends BaseJresTest {
 
         QSLogWorkerModel logWorker = new QSLogWorkerModel("test_worker", 0L);
 
-        QSLogTaskModel logTask = new QSLogTaskModel("test_batch", "test_task", "test_worker", 0L,
-                null, null, false, ImmutableMap.of("whatwhat?", "watch southpark"));
+        QSLogTaskModel logTask = new QSLogTaskModel("test_batch", "test_task", "test_handler",
+                ImmutableMap.of("whatwhat?", "watch southpark"), "test_worker", 0L, null, null, false);
         logService.startedTask(logTask);
 
         logWorker.tick = 123L;

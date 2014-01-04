@@ -10,6 +10,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 public class AmazonSQSTaskService implements QSTaskService {
 
     private static final Logger LOG = LoggerFactory.getLogger(AmazonSQSTaskService.class);
@@ -37,18 +39,23 @@ public class AmazonSQSTaskService implements QSTaskService {
             ReceiveMessageResult result = sqs.receiveMessage(new ReceiveMessageRequest(queueUrl).withMaxNumberOfMessages(1));
             assert result.getMessages().size() == 1;
             Message message = result.getMessages().get(0);
-            message.get
+
+            try {
+                task = objectMapper.readValue(message.getBody(), QSTaskModel.class);
+            } catch (IOException e) {
+                LOG.error("Failed to parse message from " + queueUrl + "\n\t" + message);
+            }
         }
-        return new QSTaskModel();
+        return task;
     }
 
     @Override
     public void resetTask(QSTaskModel task) {
-        //TODO jason
+        // nothing, message will eventually timeout and return to the queue
     }
 
     @Override
-    public void commitTask(QSTaskModel task) {
+    public void closeTask(QSTaskModel task) {
         //TODO jason
     }
 

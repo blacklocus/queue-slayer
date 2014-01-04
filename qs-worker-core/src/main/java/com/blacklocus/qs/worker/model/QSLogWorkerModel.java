@@ -21,7 +21,6 @@ package com.blacklocus.qs.worker.model;
 public class QSLogWorkerModel {
 
     public String workerId;
-
     public Long tick;
 
     public QSLogWorkerModel() {

@@ -51,7 +51,7 @@ public class BlockingQueueQSTaskService implements QSTaskService {
     }
 
     @Override
-    public void commitTask(QSTaskModel task) {
+    public void closeTask(QSTaskModel task) {
         // It's already been removed.
     }
 }

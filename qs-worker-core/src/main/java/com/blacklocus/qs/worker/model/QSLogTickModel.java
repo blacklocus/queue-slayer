@@ -23,9 +23,7 @@ import com.google.common.base.Objects;
 public class QSLogTickModel {
 
     public String taskId;
-
     public Long tick;
-
     public Object contents;
 
     public QSLogTickModel(String taskId, Long tick, Object contents) {

@@ -32,8 +32,8 @@ ext {
             guava: 'com.google.guava:guava:15.0',
             jackson_core_asl: 'org.codehaus.jackson:jackson-core-asl:1.9.13',
             jackson_mapper_asl: 'org.codehaus.jackson:jackson-mapper-asl:1.9.13',
-            jres: 'com.blacklocus:jres:0.1.2-SNAPSHOT',
-            jres_test: 'com.blacklocus:jres-test:0.1.2-SNAPSHOT',
+            jres: 'com.blacklocus:jres:0.1.1',
+            jres_test: 'com.blacklocus:jres-test:0.1.1',
             junit: 'junit:junit:4.11',
             moar_concurrent: 'com.github.rholder:moar-concurrent:1.0.2',
             slf4j_api: 'org.slf4j:slf4j-api:1.7.5',
@@ -85,9 +85,9 @@ subprojects {
     // Dependencies
 
     repositories {
-        maven {
-            url 'https://oss.sonatype.org/content/repositories/snapshots'
-        }
+//        maven {
+//            url 'https://oss.sonatype.org/content/repositories/snapshots'
+//        }
         mavenCentral()
     }
 

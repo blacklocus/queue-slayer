@@ -26,6 +26,6 @@ public interface QSTaskService {
 
     void resetTask(QSTaskModel task);
 
-    void commitTask(QSTaskModel task);
+    void closeTask(QSTaskModel task);
 
 }

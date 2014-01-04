@@ -23,33 +23,29 @@ import java.util.Map;
 public class QSLogTaskModel {
 
     public String batchId;
-
     public String taskId;
+    public String handler;
+    public Map<?, ?> params;
 
     public String workerId;
-
     public Long started;
-
     public Long finished;
-
     public Long elapsed;
-
     public Boolean finishedHappy;
-
-    public Map<?, ?> params;
 
     public QSLogTaskModel() {
     }
 
-    public QSLogTaskModel(String batchId, String taskId, String workerId, Long started, Long finished, Long elapsed,
-                          Boolean finishedHappy, Map<?, ?> params) {
+    public QSLogTaskModel(String batchId, String taskId, String handler, Map<?, ?> params, String workerId,
+                          Long started, Long finished, Long elapsed, Boolean finishedHappy) {
         this.batchId = batchId;
         this.taskId = taskId;
+        this.handler = handler;
+        this.params = params;
         this.workerId = workerId;
         this.started = started;
         this.finished = finished;
         this.elapsed = elapsed;
         this.finishedHappy = finishedHappy;
-        this.params = params;
     }
 }

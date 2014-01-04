@@ -25,11 +25,8 @@ import java.util.Map;
 public class QSTaskModel {
 
     public String batchId;
-
     public String taskId;
-
     public String handler;
-
     public Map<String, ?> params;
 
     public QSTaskModel() {

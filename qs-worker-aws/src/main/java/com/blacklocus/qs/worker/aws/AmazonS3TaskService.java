@@ -11,9 +11,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Iterator;
 import java.util.UUID;
 
-/**
- * Not thread safe.
- */
 public class AmazonS3TaskService implements QSTaskService {
 
     public static final String PARAM_OBJECT = "value";
@@ -50,8 +47,7 @@ public class AmazonS3TaskService implements QSTaskService {
         }
         S3ObjectSummary obj = iterator.next();
         assert obj != null;
-        return new QSTaskModel(listingBatchId, "" + UUID.randomUUID().toString().replace("-", ""),
-                taskHandlerIdentifier, ImmutableMap.of(PARAM_OBJECT, obj));
+        return new QSTaskModel(listingBatchId, null, taskHandlerIdentifier, ImmutableMap.of(PARAM_OBJECT, obj));
     }
 
     @Override
@@ -60,7 +56,7 @@ public class AmazonS3TaskService implements QSTaskService {
     }
 
     @Override
-    public void commitTask(QSTaskModel task) {
+    public void closeTask(QSTaskModel task) {
         // Do nothing, external process will decide if the object should be moved/deleted out of the matching listing
         // so that it does not appear again.
     }
