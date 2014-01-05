@@ -11,6 +11,7 @@ dependencies {
     compile project(':qs-core')
 
     compile deps.commons_configuration
+    compile deps.commons_io
     compile deps.jackson_core_asl
     compile deps.jackson_mapper_asl
     compile deps.moar_concurrent
