@@ -16,11 +16,14 @@
 package com.blacklocus.qs.worker.util;
 
 import com.blacklocus.misc.ExceptingRunnable;
+import com.blacklocus.misc.InfiniteRunnable;
 import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
@@ -30,28 +33,18 @@ import java.util.concurrent.SynchronousQueue;
  */
 public class ThreadedRoundRobinQSTaskService implements QSTaskService {
 
+    private final QueueingStrategy<QSTaskModel> queueingStrategy;
+
     private final SynchronousQueue<QSTaskModel> transferQueue = new SynchronousQueue<QSTaskModel>(true);
+    private final Map<QSTaskModel, QSTaskService> taskServices = new ConcurrentHashMap<QSTaskModel, QSTaskService>();
 
     public ThreadedRoundRobinQSTaskService(final QueueingStrategy<QSTaskModel> queueingStrategy, Collection<QSTaskService> taskServices) {
+        this.queueingStrategy = queueingStrategy;
+
         ExecutorService executorService = Executors.newCachedThreadPool();
 
         for (final QSTaskService taskService : taskServices) {
-
-            executorService.submit(new ExceptingRunnable() {
-                @Override
-                protected void go() throws Exception {
-                    while (!Thread.interrupted()) {
-
-                        // If the heap is filling up, this should block for a bit. queueStrategy.on*Remove not called
-                        // task processing completes in the WorkerQueueItemHandler.
-                        queueingStrategy.onBeforeAdd(null);
-                        transferQueue.put(taskService.getAvailableTask());
-                        queueingStrategy.onAfterAdd();
-
-                    }
-                }
-            });
-
+            executorService.submit(new InfiniteRunnable(new TaskTransferRunnable(taskService)));
         }
     }
 
@@ -66,34 +59,31 @@ public class ThreadedRoundRobinQSTaskService implements QSTaskService {
 
     @Override
     public void resetTask(QSTaskModel task) {
-        ((BackReferencingQSTaskModel) task).resetOriginalTask();
+        taskServices.remove(task).resetTask(task);
     }
 
     @Override
     public void closeTask(QSTaskModel task) {
-        ((BackReferencingQSTaskModel) task).closeOriginalTask();
+        taskServices.remove(task).closeTask(task);
     }
 
-    static class BackReferencingQSTaskModel extends QSTaskModel {
-        final QSTaskModel task;
+    class TaskTransferRunnable extends ExceptingRunnable {
+
         final QSTaskService taskService;
 
-        BackReferencingQSTaskModel(QSTaskModel task, QSTaskService taskService) {
-            this.task = task;
+        TaskTransferRunnable(QSTaskService taskService) {
             this.taskService = taskService;
-
-            super.batchId = task.batchId;
-            super.taskId = task.taskId;
-            super.handler = task.handler;
-            super.params = task.params;
         }
 
-        void resetOriginalTask() {
-            taskService.resetTask(task);
-        }
-
-        void closeOriginalTask() {
-            taskService.closeTask(task);
+        @Override
+        protected void go() throws Exception {
+            // If the heap is filling up, this should block for a bit. queueStrategy.on*Remove called when
+            // task processing completes in the WorkerQueueItemHandler.
+            queueingStrategy.onBeforeAdd(null);
+            QSTaskModel task = taskService.getAvailableTask();
+            ThreadedRoundRobinQSTaskService.this.taskServices.put(task, taskService);
+            transferQueue.put(task);
+            queueingStrategy.onAfterAdd();
         }
     }
 }

@@ -23,10 +23,11 @@ import com.google.common.base.Objects;
 public class QSLogTickModel {
 
     public String taskId;
+    public String workerId;
     public Long tick;
     public Object contents;
 
-    public QSLogTickModel(String taskId, Long tick, Object contents) {
+    public QSLogTickModel(String taskId, String workerId, Long tick, Object contents) {
         this.taskId = taskId;
         this.tick = tick;
         this.contents = contents;
@@ -36,6 +37,7 @@ public class QSLogTickModel {
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("taskId", taskId)
+                .add("workerId", workerId)
                 .add("tick", tick)
                 .add("contents", contents)
                 .toString();

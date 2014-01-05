@@ -20,6 +20,7 @@ import com.blacklocus.qs.worker.QSLogService;
 import com.blacklocus.qs.worker.QSTaskLogger;
 import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.QSWorker;
+import com.blacklocus.qs.worker.QSWorkerIdService;
 import com.blacklocus.qs.worker.model.QSLogTaskModel;
 import com.blacklocus.qs.worker.model.QSLogTickModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
@@ -40,13 +41,15 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     private final QueueingStrategy<QSTaskModel> queueingStrategy;
     private final QSTaskService taskService;
     private final QSLogService logService;
+    private final QSWorkerIdService workerIdService;
     private final Map<String, QSWorker> workers;
 
     WorkerQueueItemHandler(QueueingStrategy<QSTaskModel> queueingStrategy, QSTaskService taskService,
-                           QSLogService logService, Map<String, QSWorker> workers) {
+                           QSLogService logService, QSWorkerIdService workerIdService, Map<String, QSWorker> workers) {
         this.queueingStrategy = queueingStrategy;
         this.taskService = taskService;
         this.logService = logService;
+        this.workerIdService = workerIdService;
         this.workers = workers;
     }
 
@@ -101,7 +104,6 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
         logService.finishedTask(logTask);
 
         queueingStrategy.onAfterRemove(taskHandle.task);
-
     }
 
     @Override
@@ -109,7 +111,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     }
 
     private QSLogTickModel createLogTickModel(QSTaskModel task, Object contents) {
-        return new QSLogTickModel(task.taskId, System.currentTimeMillis(), contents);
+        return new QSLogTickModel(task.taskId, workerIdService.getWorkerId(), System.currentTimeMillis(), contents);
     }
 
     class QSTaskLoggerDelegate implements QSTaskLogger {

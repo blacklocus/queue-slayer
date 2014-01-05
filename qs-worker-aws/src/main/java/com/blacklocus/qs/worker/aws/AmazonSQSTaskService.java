@@ -16,6 +16,7 @@
 package com.blacklocus.qs.worker.aws;
 
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AmazonSQSTaskService implements QSTaskService {
 
@@ -35,6 +37,8 @@ public class AmazonSQSTaskService implements QSTaskService {
     private final Long pollingIntervalMs;
     private final AmazonSQS sqs;
     private final ObjectMapper objectMapper;
+
+    private final ConcurrentHashMap<QSTaskModel, String> receiptHandles = new ConcurrentHashMap<QSTaskModel, String>();
 
     public AmazonSQSTaskService(String queueUrl, AmazonSQS sqs) {
         this(queueUrl, 60 * 1000L, sqs);
@@ -52,13 +56,20 @@ public class AmazonSQSTaskService implements QSTaskService {
         QSTaskModel task = null;
         while (task == null) {
             ReceiveMessageResult result = sqs.receiveMessage(new ReceiveMessageRequest(queueUrl).withMaxNumberOfMessages(1));
-            assert result.getMessages().size() == 1;
-            Message message = result.getMessages().get(0);
+            assert result.getMessages().size() <= 1;
 
-            try {
-                task = objectMapper.readValue(message.getBody(), QSTaskModel.class);
-            } catch (IOException e) {
-                LOG.error("Failed to parse message from " + queueUrl + "\n\t" + message);
+            if (result.getMessages().size() == 1) {
+                Message message = result.getMessages().get(0);
+
+                try {
+                    task = objectMapper.readValue(message.getBody(), QSTaskModel.class);
+                    receiptHandles.put(task, message.getReceiptHandle());
+                } catch (IOException e) {
+                    LOG.error("Failed to parse message from " + queueUrl + "\n\t" + message);
+                }
+
+            } else {
+                sleep();
             }
         }
         return task;
@@ -66,12 +77,13 @@ public class AmazonSQSTaskService implements QSTaskService {
 
     @Override
     public void resetTask(QSTaskModel task) {
-        // nothing, message will eventually timeout and return to the queue
+        receiptHandles.remove(task);
+        // nothing else, message will eventually timeout and return to the queue
     }
 
     @Override
     public void closeTask(QSTaskModel task) {
-        //TODO jason
+        sqs.deleteMessage(new DeleteMessageRequest(queueUrl, receiptHandles.remove(task)));
     }
 
     private boolean sleep() {

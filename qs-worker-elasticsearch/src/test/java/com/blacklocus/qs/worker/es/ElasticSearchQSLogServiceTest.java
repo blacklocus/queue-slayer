@@ -42,8 +42,8 @@ public class ElasticSearchQSLogServiceTest extends BaseJresTest {
         logWorker.tick = 123L;
         logService.workerHeartbeat(logWorker);
 
-        logService.logTask(new QSLogTickModel(logTask.taskId, System.currentTimeMillis(), "log message 1"));
-        logService.logTask(new QSLogTickModel(logTask.taskId, System.currentTimeMillis(), "log message 2"));
+        logService.logTask(new QSLogTickModel(logTask.taskId, "test worker", System.currentTimeMillis(), "log message 1"));
+        logService.logTask(new QSLogTickModel(logTask.taskId, "test worker", System.currentTimeMillis(), "log message 2"));
 
         logTask.finishedHappy = true;
         logTask.finished = 5L;

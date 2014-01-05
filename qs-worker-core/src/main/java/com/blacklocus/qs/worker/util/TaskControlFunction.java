@@ -15,6 +15,7 @@
  */
 package com.blacklocus.qs.worker.util;
 
+import com.blacklocus.qs.worker.QSWorkerIdService;
 import com.blacklocus.qs.worker.model.QSLogTaskModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.google.common.base.Function;
@@ -27,12 +28,19 @@ import java.util.List;
  * @author Jason Dunkelberger (dirkraft)
  */
 class TaskControlFunction implements Function<Collection<QSTaskModel>, Collection<TaskHandle>> {
+
+    private final QSWorkerIdService workerIdService;
+
+    TaskControlFunction(QSWorkerIdService workerIdService) {
+        this.workerIdService = workerIdService;
+    }
+
     @Override
     public Collection<TaskHandle> apply(Collection<QSTaskModel> tasks) {
         List<TaskHandle> taskHandles = new ArrayList<TaskHandle>(tasks.size());
         for (QSTaskModel task : tasks) {
             taskHandles.add(new TaskHandle(task, new QSLogTaskModel(task.batchId, task.taskId, task.handler,
-                    task.params, null, System.currentTimeMillis(), null, null, false)));
+                    task.params, workerIdService.getWorkerId(), System.currentTimeMillis(), null, null, false)));
         }
         return taskHandles;
     }

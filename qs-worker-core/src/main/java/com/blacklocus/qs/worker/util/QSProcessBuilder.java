@@ -19,6 +19,7 @@ import com.blacklocus.qs.QueueReader;
 import com.blacklocus.qs.worker.QSLogService;
 import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.QSWorker;
+import com.blacklocus.qs.worker.QSWorkerIdService;
 import com.blacklocus.qs.worker.config.QSConfig;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.github.rholder.moar.concurrent.QueueingStrategies;
@@ -52,6 +53,7 @@ public class QSProcessBuilder {
     private final CompositeConfiguration configuration = new CompositeConfiguration();
     private final Map<String, QSWorker> workers = new HashMap<String, QSWorker>();
     private QSLogService logService;
+    private QSWorkerIdService workerIdService;
 
     public QSProcessBuilder configuration(Configuration configuration) {
         this.configuration.addConfiguration(configuration);
@@ -86,7 +88,7 @@ public class QSProcessBuilder {
         );
         QSTaskService taskService = new ThreadedRoundRobinQSTaskService(queueingStrategy, taskServices);
         TaskServiceIterable taskIterable = new TaskServiceIterable(taskService);
-        Iterable<Collection<TaskHandle>> taskControlIterable = Iterables.transform(taskIterable, new TaskControlFunction());
+        Iterable<Collection<TaskHandle>> taskControlIterable = Iterables.transform(taskIterable, new TaskControlFunction(workerIdService));
 
         ExecutorService workerExecutorService = StrategicExecutors.newBalancingThreadPoolExecutor(
                 new ThreadPoolExecutor(
@@ -100,7 +102,7 @@ public class QSProcessBuilder {
 
         return new QueueReader<TaskHandle, TaskHandle, Object>(
                 taskControlIterable,
-                new WorkerQueueItemHandler(queueingStrategy, taskService, logService, workers),
+                new WorkerQueueItemHandler(queueingStrategy, taskService, logService, workerIdService, workers),
                 workerExecutorService,
                 0
         );
