@@ -40,7 +40,7 @@ public class QSConfig {
     }
 
     public static final String PROP_HEAP_STRATEGY_TRIGGER = "qs.heapStrategy.trigger";
-    public static final double DEF_HEAP_STRATEGY_TRIGGER = 0.75;
+    public static final double DEF_HEAP_STRATEGY_TRIGGER = 0.70;
     public static final String PROP_HEAP_STRATEGY_MAX_DELAY = "qs.heapStrategy.maxDelay";
     public static final long DEF_HEAP_STRATEGY_MAX_DELAY = 60 * 1000;
     public static final String PROP_HEAP_STRATEGY_HINT = "qs.heapStrategy.hint";
