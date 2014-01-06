@@ -69,7 +69,7 @@ subprojects {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Identifiers
 
-    group = 'com.blacklocus'
+    group = 'com.blacklocus.queue-slayer'
     version = '0.1.2-SNAPSHOT'
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
