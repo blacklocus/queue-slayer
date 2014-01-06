@@ -50,7 +50,7 @@ public class AmazonS3TaskService implements QSTaskService {
         this.s3 = s3;
 
         this.objectListing = s3.listObjects(new ListObjectsRequest(bucket, prefix, null, delimiter, 1000));
-        this.listingBatchId = UUID.randomUUID().toString().replace("-", "");
+        this.listingBatchId = randomId();
         this.iterator = objectListing.getObjectSummaries().iterator();
 
     }
@@ -62,7 +62,7 @@ public class AmazonS3TaskService implements QSTaskService {
         }
         S3ObjectSummary obj = iterator.next();
         assert obj != null;
-        return new QSTaskModel(listingBatchId, null, taskHandlerIdentifier, ImmutableMap.<String, Object>of(PARAM_OBJECT, obj));
+        return new QSTaskModel(listingBatchId, randomId(), taskHandlerIdentifier, ImmutableMap.<String, Object>of(PARAM_OBJECT, obj));
     }
 
     @Override
@@ -96,4 +96,7 @@ public class AmazonS3TaskService implements QSTaskService {
         }
     }
 
+    private String randomId() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
 }

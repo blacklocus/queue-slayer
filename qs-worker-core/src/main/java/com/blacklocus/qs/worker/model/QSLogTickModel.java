@@ -29,6 +29,7 @@ public class QSLogTickModel {
 
     public QSLogTickModel(String taskId, String workerId, Long tick, Object contents) {
         this.taskId = taskId;
+        this.workerId = workerId;
         this.tick = tick;
         this.contents = contents;
     }
