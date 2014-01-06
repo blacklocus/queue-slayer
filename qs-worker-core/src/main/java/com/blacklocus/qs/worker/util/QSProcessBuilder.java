@@ -70,6 +70,11 @@ public class QSProcessBuilder {
         return this;
     }
 
+    public QSProcessBuilder workerIdService(QSWorkerIdService workerIdService) {
+        this.workerIdService = workerIdService;
+        return this;
+    }
+
     public QSProcessBuilder workers(QSWorker... workers) {
         for (QSWorker worker : workers) {
             this.workers.put(worker.getHandlerName(), worker);

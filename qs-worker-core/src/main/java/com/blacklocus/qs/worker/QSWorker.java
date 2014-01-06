@@ -24,6 +24,6 @@ public interface QSWorker {
 
     String getHandlerName();
 
-    Object undertake(Configuration params, QSTaskLogger taskLogger);
+    Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception;
 
 }

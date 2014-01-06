@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AmazonSQSTaskService implements QSTaskService {
@@ -38,7 +39,7 @@ public class AmazonSQSTaskService implements QSTaskService {
     private final AmazonSQS sqs;
     private final ObjectMapper objectMapper;
 
-    private final ConcurrentHashMap<QSTaskModel, String> receiptHandles = new ConcurrentHashMap<QSTaskModel, String>();
+    private final Map<QSTaskModel, String> receiptHandles = new ConcurrentHashMap<QSTaskModel, String>();
 
     public AmazonSQSTaskService(String queueUrl, AmazonSQS sqs) {
         this(queueUrl, 60 * 1000L, sqs);
@@ -78,12 +79,13 @@ public class AmazonSQSTaskService implements QSTaskService {
     @Override
     public void resetTask(QSTaskModel task) {
         receiptHandles.remove(task);
-        // nothing else, message will eventually timeout and return to the queue
+        // nothing, message will eventually timeout and return to the available queue
     }
 
     @Override
     public void closeTask(QSTaskModel task) {
-        sqs.deleteMessage(new DeleteMessageRequest(queueUrl, receiptHandles.remove(task)));
+        String receiptHandle = receiptHandles.remove(task);
+        sqs.deleteMessage(new DeleteMessageRequest(queueUrl, receiptHandle));
     }
 
     private boolean sleep() {

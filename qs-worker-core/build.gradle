@@ -17,4 +17,6 @@ dependencies {
     compile deps.moar_concurrent
     compile deps.fauxflake_core
 
+    testCompile deps.slf4j_simple
+    testCompile deps.mockito_core
 }

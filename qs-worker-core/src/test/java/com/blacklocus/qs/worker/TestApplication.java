@@ -17,6 +17,7 @@ package com.blacklocus.qs.worker;
 
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.simple.BlockingQueueQSTaskService;
+import com.blacklocus.qs.worker.simple.HostNameQSWorkerIdService;
 import com.blacklocus.qs.worker.simple.SystemOutQSLogService;
 import com.blacklocus.qs.worker.util.QSProcessBuilder;
 import com.google.common.collect.ImmutableMap;
@@ -46,6 +47,7 @@ public class TestApplication implements Runnable {
         new QSProcessBuilder()
                 .taskServices(new BlockingQueueQSTaskService(numbersMan))
                 .logService(new SystemOutQSLogService())
+                .workerIdService(new HostNameQSWorkerIdService())
                 .workers(new TestWorkerPrintIdentity(), new TestWorkerPrintSquare(), new TestWorkerPrintZero(), new TestWorkerUnmotivated())
                 .build()
                 .run();
@@ -59,8 +61,8 @@ public class TestApplication implements Runnable {
         @Override
         public Void call() throws Exception {
             while (!Thread.interrupted()) {
-                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), ImmutableMap.of("value", 2)));
-                Thread.sleep(1000L);
+                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), ImmutableMap.<String, Object>of("value", 2)));
+                Thread.sleep(1L);
             }
             return null;
         }
@@ -88,8 +90,9 @@ class TestWorkerPrintIdentity implements QSWorker {
     }
 
     @Override
-    public Object undertake(Configuration params, QSTaskLogger taskLogger) {
+    public Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception {
         System.out.println(params.getInt("value"));
+        Thread.sleep(1000L);
         return null;
     }
 }
@@ -104,8 +107,9 @@ class TestWorkerPrintSquare implements QSWorker {
     }
 
     @Override
-    public Object undertake(Configuration params, QSTaskLogger taskLogger) {
+    public Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception {
         System.out.println(Math.pow((double) params.getInt("value"), 2));
+        Thread.sleep(1000L);
         return null;
     }
 }
@@ -120,8 +124,9 @@ class TestWorkerPrintZero implements QSWorker {
     }
 
     @Override
-    public Object undertake(Configuration params, QSTaskLogger taskLogger) {
+    public Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception {
         System.out.println(0);
+        Thread.sleep(1000L);
         return null;
     }
 }
@@ -136,8 +141,9 @@ class TestWorkerUnmotivated implements QSWorker {
     }
 
     @Override
-    public Object undertake(Configuration params, QSTaskLogger taskLogger) {
+    public Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception {
         taskLogger.log("This is dum.");
+        Thread.sleep(1000L);
         return null;
     }
 }

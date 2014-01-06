@@ -27,12 +27,12 @@ public class QSTaskModel {
     public String batchId;
     public String taskId;
     public String handler;
-    public Map<String, ?> params;
+    public Map<String, Object> params;
 
     public QSTaskModel() {
     }
 
-    public QSTaskModel(String batchId, String taskId, String handler, Map<String, ?> params) {
+    public QSTaskModel(String batchId, String taskId, String handler, Map<String, Object> params) {
         this.batchId = batchId;
         this.taskId = taskId;
         this.handler = handler;

@@ -31,14 +31,14 @@ import java.util.concurrent.SynchronousQueue;
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public class ThreadedRoundRobinQSTaskService implements QSTaskService {
+class ThreadedRoundRobinQSTaskService implements QSTaskService {
 
     private final QueueingStrategy<QSTaskModel> queueingStrategy;
 
     private final SynchronousQueue<QSTaskModel> transferQueue = new SynchronousQueue<QSTaskModel>(true);
     private final Map<QSTaskModel, QSTaskService> taskServices = new ConcurrentHashMap<QSTaskModel, QSTaskService>();
 
-    public ThreadedRoundRobinQSTaskService(final QueueingStrategy<QSTaskModel> queueingStrategy, Collection<QSTaskService> taskServices) {
+    ThreadedRoundRobinQSTaskService(final QueueingStrategy<QSTaskModel> queueingStrategy, Collection<QSTaskService> taskServices) {
         this.queueingStrategy = queueingStrategy;
 
         ExecutorService executorService = Executors.newCachedThreadPool();
@@ -81,7 +81,7 @@ public class ThreadedRoundRobinQSTaskService implements QSTaskService {
             // task processing completes in the WorkerQueueItemHandler.
             queueingStrategy.onBeforeAdd(null);
             QSTaskModel task = taskService.getAvailableTask();
-            ThreadedRoundRobinQSTaskService.this.taskServices.put(task, taskService);
+            taskServices.put(task, taskService);
             transferQueue.put(task);
             queueingStrategy.onAfterAdd();
         }
