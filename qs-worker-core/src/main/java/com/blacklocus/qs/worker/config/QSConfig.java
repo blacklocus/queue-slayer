@@ -40,11 +40,12 @@ public class QSConfig {
     }
 
     public static final String PROP_HEAP_STRATEGY_TRIGGER = "qs.heapStrategy.trigger";
-    public static final double DEF_HEAP_STRATEGY_TRIGGER = 0.5;
+    public static final double DEF_HEAP_STRATEGY_TRIGGER = 0.75;
     public static final String PROP_HEAP_STRATEGY_MAX_DELAY = "qs.heapStrategy.maxDelay";
     public static final long DEF_HEAP_STRATEGY_MAX_DELAY = 60 * 1000;
     public static final String PROP_HEAP_STRATEGY_HINT = "qs.heapStrategy.hint";
-    public static final long DEF_HEAP_STRATEGY_HINT = Runtime.getRuntime().maxMemory() / (10 * 1024 * 1024);
+    // This default is motivated by an entirely presumptuous memory per worker thread of 5MiB.
+    public static final long DEF_HEAP_STRATEGY_HINT = Runtime.getRuntime().maxMemory() / (5 * 1024 * 1024);
     static {
         DEFAULTS.setProperty(PROP_HEAP_STRATEGY_TRIGGER, DEF_HEAP_STRATEGY_TRIGGER);
         DEFAULTS.setProperty(PROP_HEAP_STRATEGY_MAX_DELAY, DEF_HEAP_STRATEGY_MAX_DELAY);
