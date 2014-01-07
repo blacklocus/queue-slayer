@@ -29,4 +29,9 @@ class TaskHandle {
         this.task = task;
         this.logTask = logTask;
     }
+
+    @Override
+    public String toString() {
+        return task.toString();
+    }
 }

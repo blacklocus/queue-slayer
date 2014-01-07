@@ -101,7 +101,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
         QSLogTaskModel logTask = taskHandle.logTask;
         logTask.finished = System.currentTimeMillis();
         logTask.elapsed = logTask.finished - logTask.started;
-        logService.finishedTask(logTask);
+        logService.completedTask(logTask);
 
         queueingStrategy.onAfterRemove(taskHandle.task);
     }

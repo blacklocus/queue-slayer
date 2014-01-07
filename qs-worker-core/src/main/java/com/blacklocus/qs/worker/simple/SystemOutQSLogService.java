@@ -36,7 +36,7 @@ public class SystemOutQSLogService implements QSLogService {
     }
 
     @Override
-    public void finishedTask(QSLogTaskModel logTask) {
+    public void completedTask(QSLogTaskModel logTask) {
         System.out.println("Finished: " + logTask);
     }
 

@@ -48,7 +48,7 @@ public class ElasticSearchQSLogServiceTest extends BaseJresTest {
         logTask.finishedHappy = true;
         logTask.finished = 5L;
         logTask.elapsed = logTask.finished - logTask.started;
-        logService.finishedTask(logTask);
+        logService.completedTask(logTask);
 
         logWorker.tick = 456L;
         logService.workerHeartbeat(logWorker);

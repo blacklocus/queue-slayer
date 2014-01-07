@@ -21,10 +21,10 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.util.IdSupplier;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Iterator;
-import java.util.UUID;
 
 public class AmazonS3TaskService implements QSTaskService {
 
@@ -50,7 +50,7 @@ public class AmazonS3TaskService implements QSTaskService {
         this.s3 = s3;
 
         this.objectListing = s3.listObjects(new ListObjectsRequest(bucket, prefix, null, delimiter, 1000));
-        this.listingBatchId = randomId();
+        this.listingBatchId = IdSupplier.newId();
         this.iterator = objectListing.getObjectSummaries().iterator();
 
     }
@@ -62,7 +62,7 @@ public class AmazonS3TaskService implements QSTaskService {
         }
         S3ObjectSummary obj = iterator.next();
         assert obj != null;
-        return new QSTaskModel(listingBatchId, randomId(), taskHandlerIdentifier, ImmutableMap.<String, Object>of(PARAM_OBJECT, obj));
+        return new QSTaskModel(listingBatchId, IdSupplier.newId(), taskHandlerIdentifier, ImmutableMap.<String, Object>of(PARAM_OBJECT, obj));
     }
 
     @Override
@@ -96,7 +96,4 @@ public class AmazonS3TaskService implements QSTaskService {
         }
     }
 
-    private String randomId() {
-        return UUID.randomUUID().toString().replace("-", "");
-    }
 }

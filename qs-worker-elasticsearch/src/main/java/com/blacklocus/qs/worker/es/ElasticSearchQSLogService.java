@@ -25,11 +25,18 @@ import com.blacklocus.qs.worker.QSLogService;
 import com.blacklocus.qs.worker.model.QSLogTaskModel;
 import com.blacklocus.qs.worker.model.QSLogTickModel;
 import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.blacklocus.qs.worker.util.IdSupplier;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ElasticSearchQSLogService implements QSLogService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchQSLogService.class);
 
     public static final String INDEX_TYPE_TASK = "task";
     public static final String INDEX_TYPE_TASK_LOG = "taskLog";
@@ -37,6 +44,8 @@ public class ElasticSearchQSLogService implements QSLogService {
 
     private final String index;
     private final Jres jres;
+
+    private final Map<QSLogTaskModel, String> logTaskIds = new ConcurrentHashMap<QSLogTaskModel, String>();
 
     public ElasticSearchQSLogService(String index, Jres jres) {
         this.index = index;
@@ -47,10 +56,12 @@ public class ElasticSearchQSLogService implements QSLogService {
 
     @Override
     public void startedTask(QSLogTaskModel logTask) {
+        String documentId = IdSupplier.newId();
+        logTaskIds.put(logTask, documentId);
         // true - createOnly besides its literal assurance, add that if for some reason the finishedTask submission gets
         // there first, we won't overwrite it with the startedTask which would be missing 'finished' information (say,
         // due to parallelized batching submissions or some such).
-        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, logTask.taskId, logTask, true));
+        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, logTask, true));
     }
 
     @Override
@@ -60,9 +71,14 @@ public class ElasticSearchQSLogService implements QSLogService {
     }
 
     @Override
-    public void finishedTask(QSLogTaskModel logTask) {
+    public void completedTask(QSLogTaskModel logTask) {
         // Possibly updates the document submitted by startedTask, if it has been received by ElasticSearch
-        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, logTask.taskId, logTask));
+        String documentId = logTaskIds.remove(logTask);
+        if (documentId == null) {
+            LOG.warn("Could not find original LogTask document id, which means I can't update the original entry. " +
+                    "Writing the result anyhow.");
+        }
+        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, logTask));
     }
 
     @Override

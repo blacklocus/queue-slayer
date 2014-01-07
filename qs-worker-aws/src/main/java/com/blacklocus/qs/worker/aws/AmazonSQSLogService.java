@@ -51,7 +51,7 @@ public class AmazonSQSLogService implements QSLogService {
     }
 
     @Override
-    public void finishedTask(QSLogTaskModel logTask) {
+    public void completedTask(QSLogTaskModel logTask) {
         //nothing
     }
 

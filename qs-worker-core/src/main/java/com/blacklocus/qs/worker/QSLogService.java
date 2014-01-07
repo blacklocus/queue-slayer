@@ -28,7 +28,7 @@ public interface QSLogService {
 
     void logTask(QSLogTickModel logTick);
 
-    void finishedTask(QSLogTaskModel logTask);
+    void completedTask(QSLogTaskModel logTask);
 
     void workerHeartbeat(QSLogWorkerModel logWorker);
 }
