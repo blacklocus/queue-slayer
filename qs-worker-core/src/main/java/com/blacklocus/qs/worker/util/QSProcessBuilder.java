@@ -15,10 +15,12 @@
  */
 package com.blacklocus.qs.worker.util;
 
+import com.blacklocus.misc.Runnables;
 import com.blacklocus.qs.QueueReader;
 import com.blacklocus.qs.worker.QSLogService;
 import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.QSWorker;
+import com.blacklocus.qs.worker.QSWorkerHeartbeater;
 import com.blacklocus.qs.worker.QSWorkerIdService;
 import com.blacklocus.qs.worker.config.QSConfig;
 import com.blacklocus.qs.worker.model.QSTaskModel;
@@ -26,6 +28,7 @@ import com.github.rholder.moar.concurrent.QueueingStrategies;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 import com.github.rholder.moar.concurrent.StrategicExecutors;
 import com.github.rholder.moar.concurrent.thread.CallerBlocksPolicy;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -82,7 +85,18 @@ public class QSProcessBuilder {
         return this;
     }
 
+    public void validate() {
+        Preconditions.checkState(taskServices.size() > 0, "At least one QSTaskService must be present.");
+        Preconditions.checkState(workers.size() > 0, "At least one QSWorker must be present.");
+        Preconditions.checkNotNull(logService, "A QSLogService implementation is required.");
+        Preconditions.checkNotNull(workerIdService, "A QSWorkerIdService implementation is required.");
+    }
+
     public QueueReader build() {
+        validate();
+
+        Runnable heartbeater = Runnables.newInfiniteLoggingRunnable(new QSWorkerHeartbeater(workerIdService, logService));
+        new Thread(heartbeater, "WorkerHeartbeater").start();
 
         configuration.addConfiguration(QSConfig.DEFAULTS);
 

@@ -1,5 +1,6 @@
 {
   "worker": {
+    "dynamic": false,
     "_timestamp": {
       "enabled": true
     }

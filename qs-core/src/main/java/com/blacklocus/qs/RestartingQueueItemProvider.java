@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-// TODO migrate to queue-slayer project
-
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
