@@ -26,17 +26,23 @@ import com.blacklocus.qs.worker.model.QSLogTaskModel;
 import com.blacklocus.qs.worker.model.QSLogTickModel;
 import com.blacklocus.qs.worker.model.QSLogWorkerModel;
 import com.blacklocus.qs.worker.util.IdSupplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ElasticSearchQSLogService implements QSLogService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchQSLogService.class);
+    private static final Set<Class<?>> BASIC_TYPES = ImmutableSet.<Class<?>>of(String.class, Character.class,
+            Boolean.class, Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class
+    );
 
     public static final String INDEX_TYPE_TASK = "task";
     public static final String INDEX_TYPE_TASK_LOG = "taskLog";
@@ -66,7 +72,12 @@ public class ElasticSearchQSLogService implements QSLogService {
 
     @Override
     public void logTask(QSLogTickModel logTick) {
-        // Append-only, hence generated ID
+        // Since the 'contents' field is ElasticSearch type 'object' we need at a minimum some sort of a {key:value}
+        // object to put there. Wrap up basic types in a "value" field.
+        if (logTick.contents != null && BASIC_TYPES.contains(logTick.contents.getClass())) {
+            logTick = new QSLogTickModel(logTick.taskId, logTick.workerId, logTick.tick, ImmutableMap.of("value", logTick.contents));
+        }
+        // Append-only, hence generated ID.
         jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK_LOG, null, logTick));
     }
 
@@ -108,4 +119,5 @@ public class ElasticSearchQSLogService implements QSLogService {
             throw new RuntimeException(e);
         }
     }
+
 }
