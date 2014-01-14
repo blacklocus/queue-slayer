@@ -27,7 +27,7 @@ public class QSTaskModel {
     public String batchId;
     public String taskId;
     public String handler;
-    public Integer remainingAttempts;
+    public volatile Integer remainingAttempts;
     public Map<String, Object> params;
 
     public QSTaskModel() {

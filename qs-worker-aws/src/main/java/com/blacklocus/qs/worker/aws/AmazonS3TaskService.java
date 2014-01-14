@@ -67,7 +67,7 @@ public class AmazonS3TaskService implements QSTaskService {
 
     @Override
     public void resetTask(QSTaskModel task) {
-        // do nothing
+        // Do nothing. It will be seen again when the listing restarts since it hasn't been removed.
     }
 
     @Override

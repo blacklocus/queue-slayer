@@ -20,6 +20,7 @@ import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -78,8 +79,19 @@ public class AmazonSQSTaskService implements QSTaskService {
 
     @Override
     public void resetTask(QSTaskModel task) {
-        receiptHandles.remove(task);
-        // nothing, message will eventually timeout and return to the available queue
+        try {
+
+            // Re-queue the task in its current state - remainingAttempts has been changed by the WorkerQueueItemHandler.
+            String message = objectMapper.writeValueAsString(task);
+            sqs.sendMessage(new SendMessageRequest(queueUrl, message));
+
+            // Remove the currently in-flight task.
+            closeTask(task);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
