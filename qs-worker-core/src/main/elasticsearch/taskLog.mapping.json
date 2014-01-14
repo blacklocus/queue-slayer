@@ -15,6 +15,7 @@
         "type": "string"
       },
       "contents": {
+        "type": "object",
         "dynamic": true,
         "date_detection": false,
         "numeric_detection": false
