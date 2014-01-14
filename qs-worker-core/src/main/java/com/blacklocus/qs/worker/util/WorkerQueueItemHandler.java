@@ -29,6 +29,8 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -37,6 +39,8 @@ import java.util.concurrent.Future;
  * @author Jason Dunkelberger (dirkraft)
  */
 class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle, Object> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WorkerQueueItemHandler.class);
 
     private final QueueingStrategy<QSTaskModel> queueingStrategy;
     private final QSTaskService taskService;
@@ -67,6 +71,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
             throw new RuntimeException("No worker available for handler identifier: " + task.handler);
         }
 
+        LOG.info("Task working: {}", task);
         return worker.undertake(new MapConfiguration(task.params), new QSTaskLoggerDelegate(task));
     }
 
@@ -74,7 +79,9 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     public void onSuccess(TaskHandle taskHandle, Object result) {
         queueingStrategy.onBeforeRemove();
 
-        taskService.closeTask(taskHandle.task);
+        QSTaskModel task = taskHandle.task;
+        taskService.closeTask(task);
+        LOG.debug("Task succeeded: {}", task);
 
         taskHandle.logTask.finishedHappy = true;
     }
@@ -84,26 +91,39 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
         queueingStrategy.onBeforeRemove();
 
         QSTaskModel task = taskHandle.task;
-        taskService.resetTask(task);
 
         ImmutableMap<String, ImmutableMap<String, String>> exceptionDetails = ImmutableMap.of("exception", ImmutableMap.of(
                 "class", throwable.getClass().getName(),
                 "message", throwable.getMessage(),
                 "stackTrace", ExceptionUtils.getStackTrace(throwable)
         ));
-        logService.logTask(createLogTickModel(task, exceptionDetails));
+        QSLogTickModel logTick = createLogTickModel(task, exceptionDetails);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Task erred: {}", logTick, throwable);
+        } else {
+            LOG.info("Task erred: {}", logTick);
+        }
+        logService.logTask(logTick);
+
+        if (--task.remainingAttempts > 0) {
+            taskService.resetTask(task);
+        } else {
+            taskService.closeTask(task);
+        }
 
         taskHandle.logTask.finishedHappy = false;
     }
 
     @Override
     public void onComplete(TaskHandle taskHandle) {
+        QSTaskModel task = taskHandle.task;
         QSLogTaskModel logTask = taskHandle.logTask;
+
         logTask.finished = System.currentTimeMillis();
         logTask.elapsed = logTask.finished - logTask.started;
         logService.completedTask(logTask);
 
-        queueingStrategy.onAfterRemove(taskHandle.task);
+        queueingStrategy.onAfterRemove(task);
     }
 
     @Override
@@ -123,7 +143,9 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
 
         @Override
         public void log(Object contents) {
-            logService.logTask(createLogTickModel(task, contents));
+            QSLogTickModel logTick = createLogTickModel(task, contents);
+            LOG.debug("{}", logTick); // prevents logTick.toString invocation unless debug-enabled
+            logService.logTask(logTick);
         }
     }
 

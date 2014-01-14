@@ -61,7 +61,7 @@ public class TestApplication implements Runnable {
         @Override
         public Void call() throws Exception {
             while (!Thread.interrupted()) {
-                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), ImmutableMap.<String, Object>of("value", 2)));
+                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), 1, ImmutableMap.<String, Object>of("value", 2)));
                 Thread.sleep(1L);
             }
             return null;
