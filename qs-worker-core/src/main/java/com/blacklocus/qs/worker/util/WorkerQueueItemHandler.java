@@ -59,6 +59,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
 
     @Override
     public TaskHandle convert(TaskHandle task) throws Exception {
+        LOG.info("Task started: {}", task.task);
         logService.startedTask(task.logTask);
         return task;
     }
@@ -71,7 +72,6 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
             throw new RuntimeException("No worker available for handler identifier: " + task.handler);
         }
 
-        LOG.info("Task working: {}", task);
         return worker.undertake(new MapConfiguration(task.params), new QSTaskLoggerDelegate(task));
     }
 
