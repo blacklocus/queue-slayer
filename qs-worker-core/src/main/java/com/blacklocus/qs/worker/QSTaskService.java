@@ -22,6 +22,8 @@ import com.blacklocus.qs.worker.model.QSTaskModel;
  */
 public interface QSTaskService {
 
+    void putTask(QSTaskModel task);
+
     QSTaskModel getAvailableTask();
 
     void resetTask(QSTaskModel task);

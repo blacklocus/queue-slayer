@@ -31,14 +31,15 @@ import java.util.concurrent.SynchronousQueue;
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-class ThreadedRoundRobinQSTaskService implements QSTaskService {
+class ThreadedFIFOQSTaskService implements QSTaskService {
 
     private final QueueingStrategy<QSTaskModel> queueingStrategy;
 
+    // This fair=true is essentially what makes it round-robin.
     private final SynchronousQueue<QSTaskModel> transferQueue = new SynchronousQueue<QSTaskModel>(true);
     private final Map<QSTaskModel, QSTaskService> taskServices = new ConcurrentHashMap<QSTaskModel, QSTaskService>();
 
-    ThreadedRoundRobinQSTaskService(final QueueingStrategy<QSTaskModel> queueingStrategy, Collection<QSTaskService> taskServices) {
+    ThreadedFIFOQSTaskService(final QueueingStrategy<QSTaskModel> queueingStrategy, Collection<QSTaskService> taskServices) {
         this.queueingStrategy = queueingStrategy;
 
         ExecutorService executorService = Executors.newCachedThreadPool();
@@ -46,6 +47,12 @@ class ThreadedRoundRobinQSTaskService implements QSTaskService {
         for (final QSTaskService taskService : taskServices) {
             executorService.submit(new InfiniteRunnable(new TaskTransferRunnable(taskService)));
         }
+    }
+
+    @Override
+    public void putTask(QSTaskModel task) {
+        throw new RuntimeException("ThreadedRoundRobinQSTaskService is purposed for retrieving tasks and cannot " +
+                "determine which constituent Task Service should be used to place a new task.");
     }
 
     @Override

@@ -54,6 +54,18 @@ public class AmazonSQSTaskService implements QSTaskService {
     }
 
     @Override
+    public void putTask(QSTaskModel task) {
+        try {
+            LOG.info("Queueing task: {}", task);
+            String messageBody = objectMapper.writeValueAsString(task);
+            sqs.sendMessage(new SendMessageRequest(queueUrl, messageBody));
+            LOG.debug("Queued to {}, message\n\t{}", queueUrl, messageBody);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public QSTaskModel getAvailableTask() {
         QSTaskModel task = null;
         while (task == null) {

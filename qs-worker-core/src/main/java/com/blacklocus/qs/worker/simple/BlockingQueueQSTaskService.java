@@ -28,6 +28,15 @@ public class BlockingQueueQSTaskService implements QSTaskService {
 
     private final BlockingQueue<QSTaskModel> queue;
 
+    @Override
+    public void putTask(QSTaskModel task) {
+        try {
+            queue.put(task);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public BlockingQueueQSTaskService(BlockingQueue<QSTaskModel> queue) {
         this.queue = queue;
     }

@@ -105,7 +105,7 @@ public class QSProcessBuilder {
                 configuration.getLong(QSConfig.PROP_HEAP_STRATEGY_MAX_DELAY),
                 configuration.getLong(QSConfig.PROP_HEAP_STRATEGY_HINT)
         );
-        QSTaskService taskService = new ThreadedRoundRobinQSTaskService(queueingStrategy, taskServices);
+        QSTaskService taskService = new ThreadedFIFOQSTaskService(queueingStrategy, taskServices);
         TaskServiceIterable taskIterable = new TaskServiceIterable(taskService);
         Iterable<Collection<TaskHandle>> taskControlIterable = Iterables.transform(taskIterable, new TaskControlFunction(workerIdService));
 

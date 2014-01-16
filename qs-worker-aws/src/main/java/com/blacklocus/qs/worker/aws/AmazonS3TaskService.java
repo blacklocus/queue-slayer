@@ -56,6 +56,11 @@ public class AmazonS3TaskService implements QSTaskService {
     }
 
     @Override
+    public void putTask(QSTaskModel task) {
+        throw new RuntimeException("Placing a new task is not supported by this Task Service");
+    }
+
+    @Override
     public QSTaskModel getAvailableTask() {
         if (!iterator.hasNext()) {
             pageForward();
