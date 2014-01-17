@@ -37,7 +37,11 @@ public class AmazonSQSAsyncPutTaskService {
     private final AmazonSQSAsync sqs;
 
     public AmazonSQSAsyncPutTaskService(String queueUrl) {
-        this(queueUrl, new ObjectMapper(), new AmazonSQSAsyncClient());
+        this(queueUrl, new AmazonSQSAsyncClient());
+    }
+
+    public AmazonSQSAsyncPutTaskService(String queueUrl, AmazonSQSAsync sqs) {
+        this(queueUrl, new ObjectMapper(), sqs);
     }
 
     public AmazonSQSAsyncPutTaskService(String queueUrl, ObjectMapper objectMapper, AmazonSQSAsync sqs) {
