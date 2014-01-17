@@ -16,6 +16,7 @@
 package com.blacklocus.qs.worker.aws;
 
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
@@ -41,6 +42,10 @@ public class AmazonSQSTaskService implements QSTaskService {
     private final ObjectMapper objectMapper;
 
     private final Map<QSTaskModel, String> receiptHandles = new ConcurrentHashMap<QSTaskModel, String>();
+
+    public AmazonSQSTaskService(String queueUrl) {
+        this(queueUrl, new AmazonSQSClient());
+    }
 
     public AmazonSQSTaskService(String queueUrl, AmazonSQS sqs) {
         this(queueUrl, 60 * 1000L, sqs);
