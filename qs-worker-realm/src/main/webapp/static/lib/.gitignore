@@ -1,0 +1,11 @@
+
+jquery/*
+!jquery/*.js
+!jquery/*.map
+
+
+!*/.bower.json
+!*/bower.json
+!*/component.json
+!*/composer.json
+!*/package.json

@@ -18,6 +18,8 @@ package com.blacklocus.qs.worker.model;
 import java.util.Map;
 
 /**
+ * The root log trail of a {@link QSTaskModel qs task} that tracks aspects about its processing state.
+ *
  * @author Jason Dunkelberger (dirkraft)
  */
 public class QSLogTaskModel {

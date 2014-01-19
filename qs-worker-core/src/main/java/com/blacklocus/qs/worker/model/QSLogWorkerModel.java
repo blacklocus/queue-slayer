@@ -16,6 +16,9 @@
 package com.blacklocus.qs.worker.model;
 
 /**
+ * Denotes a worker instance, typically a machine, though the scope definition of an individual worker is up to the
+ * user.
+ *
  * @author Jason Dunkelberger (dirkraft)
  */
 public class QSLogWorkerModel {

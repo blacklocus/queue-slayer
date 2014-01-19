@@ -1,0 +1,11 @@
+dependencies {
+    compile deps.jersey_jump
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/main/webapp/static'
+        }
+    }
+}

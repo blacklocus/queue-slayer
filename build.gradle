@@ -33,9 +33,9 @@ ext {
             guava: 'com.google.guava:guava:15.0',
             jackson_core_asl: 'org.codehaus.jackson:jackson-core-asl:1.9.13',
             jackson_mapper_asl: 'org.codehaus.jackson:jackson-mapper-asl:1.9.13',
-            // TODO move me to 0.1.2 when it is available on maven central
-            jres: 'com.blacklocus:jres:0.1.2-SNAPSHOT',
-            jres_test: 'com.blacklocus:jres-test:0.1.2-SNAPSHOT',
+            jersey_jump: 'com.blacklocus:jersey-jump:1.0.2',
+            jres: 'com.blacklocus:jres:0.1.3',
+            jres_test: 'com.blacklocus:jres-test:0.1.3',
             junit: 'junit:junit:4.11',
             moar_concurrent: 'com.github.rholder:moar-concurrent:1.0.2',
             mockito_core: 'org.mockito:mockito-core:1.9.5',
@@ -89,9 +89,6 @@ subprojects {
     // Dependencies
 
     repositories {
-        maven {
-            url 'https://oss.sonatype.org/content/repositories/snapshots'
-        }
         mavenCentral()
     }
 

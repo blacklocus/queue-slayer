@@ -18,6 +18,8 @@ package com.blacklocus.qs.worker.model;
 import com.google.common.base.Objects;
 
 /**
+ * Any free-form log message related to some task in processing.
+ *
  * @author Jason Dunkelberger (dirkraft)
  */
 public class QSLogTickModel {

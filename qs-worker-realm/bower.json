@@ -1,0 +1,6 @@
+{
+  "name": "qs-worker-realm",
+  "dependencies": {
+    "jquery": "2.0.3"
+  }
+}

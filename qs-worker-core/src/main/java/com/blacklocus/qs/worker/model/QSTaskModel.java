@@ -20,6 +20,8 @@ import com.google.common.base.Objects;
 import java.util.Map;
 
 /**
+ * The definition of a task which can be carried out by a worker.
+ *
  * @author Jason Dunkelberger (dirkraft)
  */
 public class QSTaskModel {
