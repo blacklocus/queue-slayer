@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blacklocus.qs.worker.util;
+package com.blacklocus.qs.worker;
 
 import com.blacklocus.misc.ExceptingRunnable;
 import com.blacklocus.misc.InfiniteRunnable;
-import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 

@@ -1,11 +1,17 @@
 dependencies {
-    compile deps.jersey_jump
+
+    compile project(':qs-worker-core')
+    compile deps.dropwizard_core
+
+    testCompile project(':qs-worker-elasticsearch')
+    testCompile deps.jres_test
+
 }
 
 sourceSets {
     main {
         resources {
-            srcDir 'src/main/webapp/static'
+            srcDir 'src/main/webapp'
         }
     }
 }

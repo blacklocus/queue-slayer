@@ -15,6 +15,8 @@
  */
 package com.blacklocus.qs.worker.model;
 
+import com.google.common.base.Objects;
+
 import java.util.Map;
 
 /**
@@ -49,5 +51,20 @@ public class QSLogTaskModel {
         this.finished = finished;
         this.elapsed = elapsed;
         this.finishedHappy = finishedHappy;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("batchId", batchId)
+                .add("taskId", taskId)
+                .add("handler", handler)
+                .add("params", params)
+                .add("workerId", workerId)
+                .add("started", started)
+                .add("finished", finished)
+                .add("elapsed", elapsed)
+                .add("finishedHappy", finishedHappy)
+                .toString();
     }
 }

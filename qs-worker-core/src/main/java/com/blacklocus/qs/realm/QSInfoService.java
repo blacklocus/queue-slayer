@@ -2,21 +2,21 @@ package com.blacklocus.qs.realm;
 
 import com.blacklocus.qs.worker.model.QSLogTaskModel;
 import com.blacklocus.qs.worker.model.QSLogTickModel;
-import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.google.common.annotations.Beta;
 
 import java.util.List;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
+@Beta
 public interface QSInfoService {
 
-    List<QSTaskModel> findTasks(FindTasks findTasks);
+    List<QSLogTaskModel> findTasks(FindTasks findTasks);
 
-    List<QSLogTaskModel> findTaskLogs(FindTaskLogs findTaskLogs);
+    List<QSLogTickModel> findLogs(FindLogs findLogs);
 
-    List<QSLogTickModel> findLogTicks(FindLogTicks findLogTicks);
-
-    List<QSLogTickModel> findWorkers(FindWorkers findWorkers);
+    List<QSLogWorkerModel> findWorkers(FindWorkers findWorkers);
 
 }

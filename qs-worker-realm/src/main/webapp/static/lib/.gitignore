@@ -1,8 +1,8 @@
 
-jquery/*
-!jquery/*.js
-!jquery/*.map
-
+angular/*
+!angular/*.js
+!angular/*.map
+!angular/*.css
 
 !*/.bower.json
 !*/bower.json

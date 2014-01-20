@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blacklocus.qs.worker.util;
+package com.blacklocus.qs.worker;
 
-import com.blacklocus.qs.worker.QSWorkerIdService;
 import com.blacklocus.qs.worker.model.QSLogTaskModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.google.common.base.Function;
