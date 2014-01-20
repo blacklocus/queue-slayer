@@ -1,7 +1,6 @@
 {
   "name": "qs-worker-realm-ui",
-  "version": "0.0.1",
-  "main": "",
+  "version": "0.0.1-SNAPSHOT",
   "ignore": [
     ".bowerrc",
     "build.gradle",
@@ -9,6 +8,7 @@
   ],
   "dependencies": {
     "angular": "1.2.9",
-    "angular-route": "1.2.9"
+    "angular-route": "1.2.9",
+    "requirejs": "2.1.10"
   }
 }
