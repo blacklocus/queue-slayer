@@ -31,7 +31,8 @@ public class ElasticSearchQSLogServiceTest extends BaseJresTest {
 
     @Test
     public void testLifecycle() {
-        QSLogService logService = new ElasticSearchQSLogService("test", jres);
+        String index = "ElasticSearchQSLogServiceTest.testLifecycle".toLowerCase();
+        QSLogService logService = new ElasticSearchQSLogService(index, jres);
 
         QSLogWorkerModel logWorker = new QSLogWorkerModel("test_worker", 0L);
 
@@ -54,8 +55,8 @@ public class ElasticSearchQSLogServiceTest extends BaseJresTest {
         logService.workerHeartbeat(logWorker);
 
 
-        jres.quest(new JresRefresh("test"));
-        JresSearchReply reply = jres.quest(new JresSearch());
+        jres.quest(new JresRefresh(index));
+        JresSearchReply reply = jres.quest(new JresSearch(index, null));
         Assert.assertEquals(new Integer(4), reply.getHits().getTotal()); // weak test
     }
 }
