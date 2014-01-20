@@ -8,6 +8,7 @@
     "test/"
   ],
   "dependencies": {
-    "angular": "1.2.9"
+    "angular": "1.2.9",
+    "angular-route": "1.2.9"
   }
 }
