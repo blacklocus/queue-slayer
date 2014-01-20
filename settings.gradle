@@ -1,1 +1,3 @@
-include 'qs-aws', 'qs-core', 'qs-worker-core', 'qs-worker-aws', 'qs-worker-elasticsearch', 'qs-worker-realm'
+include 'qs-aws', 'qs-core',
+        'qs-worker-core', 'qs-worker-aws', 'qs-worker-elasticsearch',
+        'qs-worker-realm-server', 'qs-worker-realm-ui'

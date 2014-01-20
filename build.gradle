@@ -29,6 +29,7 @@ ext {
             commons_configuration: 'commons-configuration:commons-configuration:1.10',
             commons_io: 'commons-io:commons-io:2.4',
             commons_lang3: 'org.apache.commons:commons-lang3:3.1',
+            dropwizard_core: 'com.yammer.dropwizard:dropwizard-core:0.6.2',
             fauxflake_core: 'com.github.rholder.fauxflake:fauxflake-core:1.0.0',
             guava: 'com.google.guava:guava:15.0',
             jackson_core_asl: 'org.codehaus.jackson:jackson-core-asl:1.9.13',

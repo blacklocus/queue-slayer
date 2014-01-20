@@ -7,11 +7,3 @@ dependencies {
     testCompile deps.jres_test
 
 }
-
-sourceSets {
-    main {
-        resources {
-            srcDir 'src/main/webapp'
-        }
-    }
-}
