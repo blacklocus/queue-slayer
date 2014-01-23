@@ -14,7 +14,8 @@
         "analyzer": "keyword"
       },
       "handler" : {
-        "type" : "string"
+        "type" : "string",
+        "analyzer": "keyword"
       },
       "started" : {
         "type" : "date"
@@ -29,7 +30,8 @@
         "type" : "boolean"
       },
       "workerId" : {
-        "type" : "string"
+        "type" : "string",
+        "analyzer": "keyword"
       },
       "params" : {
         "type": "object",
