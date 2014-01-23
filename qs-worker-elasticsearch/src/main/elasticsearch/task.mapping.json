@@ -1,0 +1,44 @@
+{
+  "task": {
+    "dynamic": false,
+    "_timestamp": {
+      "enabled": true
+    },
+    "properties" : {
+      "batchId" : {
+        "type" : "string",
+        "analyzer": "keyword"
+      },
+      "taskId" : {
+        "type" : "string",
+        "analyzer": "keyword"
+      },
+      "handler" : {
+        "type" : "string",
+        "analyzer": "keyword"
+      },
+      "started" : {
+        "type" : "date"
+      },
+      "finished" : {
+        "type" : "date"
+      },
+      "elapsed" : {
+        "type" : "long"
+      },
+      "finishedHappy" : {
+        "type" : "boolean"
+      },
+      "workerId" : {
+        "type" : "string",
+        "analyzer": "keyword"
+      },
+      "params" : {
+        "type": "object",
+        "dynamic": true,
+        "date_detection" : false,
+        "numeric_detection": false
+      }
+    }
+  }
+}

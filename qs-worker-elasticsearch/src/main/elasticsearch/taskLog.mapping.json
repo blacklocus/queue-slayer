@@ -1,0 +1,25 @@
+{
+  "taskLog": {
+    "dynamic": false,
+    "_timestamp": {
+      "enabled": true
+    },
+    "properties": {
+      "taskId": {
+        "type": "string"
+      },
+      "tick": {
+        "type": "date"
+      },
+      "workerId": {
+        "type": "string"
+      },
+      "contents": {
+        "type": "object",
+        "dynamic": true,
+        "date_detection": false,
+        "numeric_detection": false
+      }
+    }
+  }
+}
