@@ -27,7 +27,10 @@ import com.blacklocus.qs.worker.model.QSLogTaskModel;
 import com.blacklocus.qs.worker.model.QSLogTickModel;
 import com.blacklocus.qs.worker.model.QSLogWorkerModel;
 import com.google.common.annotations.Beta;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -53,14 +56,24 @@ public class ElasticSearchQSInfoService implements QSInfoService {
     public List<QSLogTaskModel> findTasks(FindTasks findTasks) {
         JresSearchBody search = new JresSearchBody().size(100);
         JresSearchReply reply = jres.quest(new JresSearch(index, ElasticSearchQSLogService.INDEX_TYPE_TASK, search));
-        return reply.getHitsAsType(QSLogTaskModel.class);
+        return Lists.transform(reply.getHitsAsType(QSLogTaskElasticSearchModel.class), new Function<QSLogTaskElasticSearchModel, QSLogTaskModel>() {
+            @Override
+            public QSLogTaskModel apply(QSLogTaskElasticSearchModel input) {
+                return input.toNormalModel();
+            }
+        });
     }
 
     @Override
     public List<QSLogTickModel> findLogs(FindLogs findLogs) {
         JresSearchBody search = new JresSearchBody().size(100);
         JresSearchReply reply = jres.quest(new JresSearch(index, ElasticSearchQSLogService.INDEX_TYPE_TASK_LOG, search));
-        return reply.getHitsAsType(QSLogTickModel.class);
+        return Lists.transform(reply.getHitsAsType(QSLogTickElasticSearchModel.class), new Function<QSLogTickElasticSearchModel, QSLogTickModel>() {
+            @Override
+            public QSLogTickModel apply(QSLogTickElasticSearchModel input) {
+                return input.toNormalModel();
+            }
+        });
     }
 
     @Override

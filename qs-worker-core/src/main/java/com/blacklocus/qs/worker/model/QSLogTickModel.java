@@ -26,12 +26,14 @@ public class QSLogTickModel {
 
     public String taskId;
     public String workerId;
+    public String handler;
     public Long tick;
     public Object contents;
 
-    public QSLogTickModel(String taskId, String workerId, Long tick, Object contents) {
+    public QSLogTickModel(String taskId, String workerId, String handler, Long tick, Object contents) {
         this.taskId = taskId;
         this.workerId = workerId;
+        this.handler = handler;
         this.tick = tick;
         this.contents = contents;
     }
@@ -41,6 +43,7 @@ public class QSLogTickModel {
         return Objects.toStringHelper(this)
                 .add("taskId", taskId)
                 .add("workerId", workerId)
+                .add("handler", handler)
                 .add("tick", tick)
                 .add("contents", contents)
                 .toString();

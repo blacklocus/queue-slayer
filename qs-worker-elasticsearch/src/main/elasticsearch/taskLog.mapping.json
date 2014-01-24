@@ -1,6 +1,8 @@
 {
   "taskLog": {
     "dynamic": false,
+    "date_detection": false,
+    "numeric_detection": false,
     "_timestamp": {
       "enabled": true
     },
@@ -16,9 +18,7 @@
       },
       "contents": {
         "type": "object",
-        "dynamic": true,
-        "date_detection": false,
-        "numeric_detection": false
+        "dynamic": true
       }
     }
   }

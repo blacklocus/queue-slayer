@@ -22,21 +22,15 @@ import com.blacklocus.qs.worker.model.QSLogTaskModel;
 import com.blacklocus.qs.worker.model.QSLogTickModel;
 import com.blacklocus.qs.worker.model.QSLogWorkerModel;
 import com.blacklocus.qs.worker.util.IdSupplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ElasticSearchQSLogService implements QSLogService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchQSLogService.class);
-    private static final Set<Class<?>> BASIC_TYPES = ImmutableSet.<Class<?>>of(String.class, Character.class,
-            Boolean.class, Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class
-    );
 
     public static final String INDEX_TYPE_TASK = "task";
     public static final String INDEX_TYPE_TASK_LOG = "taskLog";
@@ -64,18 +58,13 @@ public class ElasticSearchQSLogService implements QSLogService {
         // true - createOnly besides its literal assurance, add that if for some reason the finishedTask submission gets
         // there first, we won't overwrite it with the startedTask which would be missing 'finished' information (say,
         // due to parallelized batching submissions or some such).
-        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, logTask, true));
+        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, new QSLogTaskElasticSearchModel(logTask), true));
     }
 
     @Override
     public void logTask(QSLogTickModel logTick) {
-        // Since the 'contents' field is ElasticSearch type 'object' we need at a minimum some sort of a {key:value}
-        // object to put there. Wrap up basic types in a "value" field.
-        if (logTick.contents != null && BASIC_TYPES.contains(logTick.contents.getClass())) {
-            logTick = new QSLogTickModel(logTick.taskId, logTick.workerId, logTick.tick, ImmutableMap.of("value", logTick.contents));
-        }
         // Append-only, hence generated ID.
-        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK_LOG, null, logTick));
+        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK_LOG, null, new QSLogTickElasticSearchModel(logTick)));
     }
 
     @Override
@@ -86,7 +75,7 @@ public class ElasticSearchQSLogService implements QSLogService {
             LOG.warn("Could not find original LogTask document id, which means I can't update the original entry. " +
                     "Writing the result anyhow.");
         }
-        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, logTask));
+        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, new QSLogTaskElasticSearchModel(logTask)));
     }
 
     @Override

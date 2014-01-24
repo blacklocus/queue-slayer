@@ -126,7 +126,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     }
 
     private QSLogTickModel createLogTickModel(QSTaskModel task, Object contents) {
-        return new QSLogTickModel(task.taskId, workerIdService.getWorkerId(), System.currentTimeMillis(), contents);
+        return new QSLogTickModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), contents);
     }
 
     class QSTaskLoggerDelegate implements QSTaskLogger {
