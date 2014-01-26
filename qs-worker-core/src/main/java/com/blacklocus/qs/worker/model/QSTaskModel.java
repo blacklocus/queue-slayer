@@ -16,7 +16,6 @@
 package com.blacklocus.qs.worker.model;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -43,7 +42,7 @@ public class QSTaskModel {
     /**
      * Constructor with fields important to queued jobs. Omits all tracking and status-oriented fields.
      */
-    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, ImmutableMap<String, Object> params) {
+    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, Map<String, ?> params) {
         this(batchId, taskId, handler, remainingAttempts, params, null, null, null, null, null);
     }
 
