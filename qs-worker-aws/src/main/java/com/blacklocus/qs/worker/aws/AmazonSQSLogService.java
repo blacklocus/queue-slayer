@@ -18,9 +18,9 @@ package com.blacklocus.qs.worker.aws;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.blacklocus.qs.worker.QSLogService;
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
-import com.blacklocus.qs.worker.model.QSLogTickModel;
-import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.blacklocus.qs.worker.model.QSLogModel;
+import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.model.QSWorkerModel;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -41,26 +41,26 @@ public class AmazonSQSLogService implements QSLogService {
     }
 
     @Override
-    public void startedTask(QSLogTaskModel logTask) {
+    public void startedTask(QSTaskModel task) {
         // nothing
     }
 
     @Override
-    public void logTask(QSLogTickModel logTick) {
-        sqs.sendMessage(new SendMessageRequest(queueUrl, thing(logTick)));
+    public void log(QSLogModel log) {
+        sqs.sendMessage(new SendMessageRequest(queueUrl, thing(log)));
     }
 
     @Override
-    public void completedTask(QSLogTaskModel logTask) {
+    public void completedTask(QSTaskModel task) {
         //nothing
     }
 
     @Override
-    public void workerHeartbeat(QSLogWorkerModel logWorker) {
+    public void workerHeartbeat(QSWorkerModel worker) {
         // nothing
     }
 
-    private String thing(QSLogTickModel logTick) {
+    private String thing(QSLogModel logTick) {
         try {
             return objectMapper.writeValueAsString(logTick);
         } catch (IOException e) {

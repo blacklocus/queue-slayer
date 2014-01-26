@@ -23,14 +23,13 @@ import com.blacklocus.qs.realm.FindLogs;
 import com.blacklocus.qs.realm.FindTasks;
 import com.blacklocus.qs.realm.FindWorkers;
 import com.blacklocus.qs.realm.QSInfoService;
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
-import com.blacklocus.qs.worker.model.QSLogTickModel;
-import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.blacklocus.qs.worker.model.QSLogModel;
+import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.model.QSWorkerModel;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -53,34 +52,34 @@ public class ElasticSearchQSInfoService implements QSInfoService {
     }
 
     @Override
-    public List<QSLogTaskModel> findTasks(FindTasks findTasks) {
+    public List<QSTaskModel> findTasks(FindTasks findTasks) {
         JresSearchBody search = new JresSearchBody().size(100);
         JresSearchReply reply = jres.quest(new JresSearch(index, ElasticSearchQSLogService.INDEX_TYPE_TASK, search));
-        return Lists.transform(reply.getHitsAsType(QSLogTaskElasticSearchModel.class), new Function<QSLogTaskElasticSearchModel, QSLogTaskModel>() {
+        return Lists.transform(reply.getHitsAsType(QSTaskElasticSearchModel.class), new Function<QSTaskElasticSearchModel, QSTaskModel>() {
             @Override
-            public QSLogTaskModel apply(QSLogTaskElasticSearchModel input) {
+            public QSTaskModel apply(QSTaskElasticSearchModel input) {
                 return input.toNormalModel();
             }
         });
     }
 
     @Override
-    public List<QSLogTickModel> findLogs(FindLogs findLogs) {
+    public List<QSLogModel> findLogs(FindLogs findLogs) {
         JresSearchBody search = new JresSearchBody().size(100);
         JresSearchReply reply = jres.quest(new JresSearch(index, ElasticSearchQSLogService.INDEX_TYPE_TASK_LOG, search));
-        return Lists.transform(reply.getHitsAsType(QSLogTickElasticSearchModel.class), new Function<QSLogTickElasticSearchModel, QSLogTickModel>() {
+        return Lists.transform(reply.getHitsAsType(QSLogElasticSearchModel.class), new Function<QSLogElasticSearchModel, QSLogModel>() {
             @Override
-            public QSLogTickModel apply(QSLogTickElasticSearchModel input) {
+            public QSLogModel apply(QSLogElasticSearchModel input) {
                 return input.toNormalModel();
             }
         });
     }
 
     @Override
-    public List<QSLogWorkerModel> findWorkers(FindWorkers findWorkers) {
+    public List<QSWorkerModel> findWorkers(FindWorkers findWorkers) {
         JresSearchBody search = new JresSearchBody().size(100);
         JresSearchReply reply = jres.quest(new JresSearch(index, ElasticSearchQSLogService.INDEX_TYPE_WORKER, search));
-        return reply.getHitsAsType(QSLogWorkerModel.class);
+        return reply.getHitsAsType(QSWorkerModel.class);
     }
 
 }

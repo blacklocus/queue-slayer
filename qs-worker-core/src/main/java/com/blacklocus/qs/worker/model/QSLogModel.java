@@ -22,7 +22,7 @@ import com.google.common.base.Objects;
  *
  * @author Jason Dunkelberger (dirkraft)
  */
-public class QSLogTickModel {
+public class QSLogModel {
 
     public String taskId;
     public String workerId;
@@ -30,7 +30,7 @@ public class QSLogTickModel {
     public Long tick;
     public Object contents;
 
-    public QSLogTickModel(String taskId, String workerId, String handler, Long tick, Object contents) {
+    public QSLogModel(String taskId, String workerId, String handler, Long tick, Object contents) {
         this.taskId = taskId;
         this.workerId = workerId;
         this.handler = handler;

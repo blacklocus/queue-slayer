@@ -19,9 +19,9 @@ import com.blacklocus.qs.realm.FindLogs;
 import com.blacklocus.qs.realm.FindTasks;
 import com.blacklocus.qs.realm.FindWorkers;
 import com.blacklocus.qs.realm.QSInfoService;
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
-import com.blacklocus.qs.worker.model.QSLogTickModel;
-import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.blacklocus.qs.worker.model.QSLogModel;
+import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.model.QSWorkerModel;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -44,19 +44,19 @@ public class QSInfoWeb {
 
     @GET
     @Path("tasks")
-    public List<QSLogTaskModel> findTasks() {
+    public List<QSTaskModel> findTasks() {
         return infoService.findTasks(new FindTasks());
     }
 
     @GET
     @Path("logs")
-    public List<QSLogTickModel> findLogs() {
+    public List<QSLogModel> findLogs() {
         return infoService.findLogs(new FindLogs());
     }
 
     @GET
     @Path("workers")
-    public List<QSLogWorkerModel> findWorkers() {
+    public List<QSWorkerModel> findWorkers() {
         return infoService.findWorkers(new FindWorkers());
     }
 }

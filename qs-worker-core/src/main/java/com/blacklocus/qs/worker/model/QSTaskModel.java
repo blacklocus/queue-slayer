@@ -16,12 +16,11 @@
 package com.blacklocus.qs.worker.model;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
 /**
- * The definition of a task which can be carried out by a worker.
- *
  * @author Jason Dunkelberger (dirkraft)
  */
 public class QSTaskModel {
@@ -29,18 +28,36 @@ public class QSTaskModel {
     public String batchId;
     public String taskId;
     public String handler;
-    public volatile Integer remainingAttempts;
-    public Map<String, Object> params;
+    public Integer remainingAttempts;
+    public Map<String, ?> params;
+
+    public String workerId;
+    public Long started;
+    public Long finished;
+    public Long elapsed;
+    public Boolean finishedHappy;
 
     public QSTaskModel() {
     }
 
-    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, Map<String, Object> params) {
+    /**
+     * Constructor with fields important to queued jobs. Omits all tracking and status-oriented fields.
+     */
+    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, ImmutableMap<String, Object> params) {
+        this(batchId, taskId, handler, remainingAttempts, params, null, null, null, null, null);
+    }
+
+    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, Map<String, ?> params,
+                       String workerId, Long started, Long finished, Long elapsed, Boolean finishedHappy) {
         this.batchId = batchId;
         this.taskId = taskId;
         this.handler = handler;
-        this.remainingAttempts = remainingAttempts;
         this.params = params;
+        this.workerId = workerId;
+        this.started = started;
+        this.finished = finished;
+        this.elapsed = elapsed;
+        this.finishedHappy = finishedHappy;
     }
 
     @Override
@@ -50,6 +67,11 @@ public class QSTaskModel {
                 .add("taskId", taskId)
                 .add("handler", handler)
                 .add("params", params)
+                .add("workerId", workerId)
+                .add("started", started)
+                .add("finished", finished)
+                .add("elapsed", elapsed)
+                .add("finishedHappy", finishedHappy)
                 .toString();
     }
 }

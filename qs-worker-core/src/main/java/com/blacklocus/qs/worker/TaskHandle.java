@@ -15,7 +15,6 @@
  */
 package com.blacklocus.qs.worker;
 
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 
 /**
@@ -23,9 +22,9 @@ import com.blacklocus.qs.worker.model.QSTaskModel;
  */
 class TaskHandle {
     public final QSTaskModel task;
-    public final QSLogTaskModel logTask;
+    public final QSTaskModel logTask;
 
-    TaskHandle(QSTaskModel task, QSLogTaskModel logTask) {
+    TaskHandle(QSTaskModel task, QSTaskModel logTask) {
         this.task = task;
         this.logTask = logTask;
     }

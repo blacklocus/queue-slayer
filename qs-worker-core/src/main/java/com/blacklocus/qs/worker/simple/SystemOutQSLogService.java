@@ -16,9 +16,9 @@
 package com.blacklocus.qs.worker.simple;
 
 import com.blacklocus.qs.worker.QSLogService;
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
-import com.blacklocus.qs.worker.model.QSLogTickModel;
-import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.blacklocus.qs.worker.model.QSLogModel;
+import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.model.QSWorkerModel;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
@@ -26,22 +26,22 @@ import com.blacklocus.qs.worker.model.QSLogWorkerModel;
 public class SystemOutQSLogService implements QSLogService {
 
     @Override
-    public void startedTask(QSLogTaskModel logTask) {
-        System.out.println("Started: " + logTask);
+    public void startedTask(QSTaskModel task) {
+        System.out.println("Started: " + task);
     }
 
     @Override
-    public void logTask(QSLogTickModel logTick) {
-        System.out.println("Log: " + logTick);
+    public void log(QSLogModel log) {
+        System.out.println("Log: " + log);
     }
 
     @Override
-    public void completedTask(QSLogTaskModel logTask) {
-        System.out.println("Finished: " + logTask);
+    public void completedTask(QSTaskModel task) {
+        System.out.println("Finished: " + task);
     }
 
     @Override
-    public void workerHeartbeat(QSLogWorkerModel logWorker) {
-        System.out.println("Worker: " + logWorker);
+    public void workerHeartbeat(QSWorkerModel worker) {
+        System.out.println("Worker: " + worker);
     }
 }

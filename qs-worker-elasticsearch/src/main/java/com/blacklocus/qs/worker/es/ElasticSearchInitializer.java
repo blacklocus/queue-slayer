@@ -49,7 +49,7 @@ public class ElasticSearchInitializer {
             jres.quest(new JresPutMapping(index, INDEX_TYPE_TASK, getElasticSearchJson("/task.mapping.json")));
         }
         if (!jres.bool(new JresTypeExists(index, INDEX_TYPE_TASK_LOG)).verity()) {
-            jres.quest(new JresPutMapping(index, INDEX_TYPE_TASK_LOG, getElasticSearchJson("/taskLog.mapping.json")));
+            jres.quest(new JresPutMapping(index, INDEX_TYPE_TASK_LOG, getElasticSearchJson("/log.mapping.json")));
         }
         if (!jres.bool(new JresTypeExists(index, INDEX_TYPE_WORKER)).verity()) {
             jres.quest(new JresPutMapping(index, INDEX_TYPE_WORKER, getElasticSearchJson("/worker.mapping.json")));

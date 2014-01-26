@@ -15,20 +15,20 @@
  */
 package com.blacklocus.qs.worker;
 
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
-import com.blacklocus.qs.worker.model.QSLogTickModel;
-import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.blacklocus.qs.worker.model.QSLogModel;
+import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.model.QSWorkerModel;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
 public interface QSLogService {
 
-    void startedTask(QSLogTaskModel logTask);
+    void startedTask(QSTaskModel task);
 
-    void logTask(QSLogTickModel logTick);
+    void log(QSLogModel log);
 
-    void completedTask(QSLogTaskModel logTask);
+    void completedTask(QSTaskModel task);
 
-    void workerHeartbeat(QSLogWorkerModel logWorker);
+    void workerHeartbeat(QSWorkerModel worker);
 }

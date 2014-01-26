@@ -18,9 +18,9 @@ package com.blacklocus.qs.worker.es;
 import com.blacklocus.jres.Jres;
 import com.blacklocus.jres.request.index.JresIndexDocument;
 import com.blacklocus.qs.worker.QSLogService;
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
-import com.blacklocus.qs.worker.model.QSLogTickModel;
-import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.blacklocus.qs.worker.model.QSLogModel;
+import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.model.QSWorkerModel;
 import com.blacklocus.qs.worker.util.IdSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +33,13 @@ public class ElasticSearchQSLogService implements QSLogService {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchQSLogService.class);
 
     public static final String INDEX_TYPE_TASK = "task";
-    public static final String INDEX_TYPE_TASK_LOG = "taskLog";
+    public static final String INDEX_TYPE_TASK_LOG = "log";
     public static final String INDEX_TYPE_WORKER = "worker";
 
     private final String index;
     private final Jres jres;
 
-    private final Map<QSLogTaskModel, String> logTaskIds = new ConcurrentHashMap<QSLogTaskModel, String>();
+    private final Map<QSTaskModel, String> logTaskIds = new ConcurrentHashMap<QSTaskModel, String>();
 
     public ElasticSearchQSLogService(String index, Jres jres) {
         this(index, new ElasticSearchInitializer(index, jres), jres);
@@ -52,35 +52,35 @@ public class ElasticSearchQSLogService implements QSLogService {
     }
 
     @Override
-    public void startedTask(QSLogTaskModel logTask) {
+    public void startedTask(QSTaskModel task) {
         String documentId = IdSupplier.newId();
-        logTaskIds.put(logTask, documentId);
+        logTaskIds.put(task, documentId);
         // true - createOnly besides its literal assurance, add that if for some reason the finishedTask submission gets
         // there first, we won't overwrite it with the startedTask which would be missing 'finished' information (say,
         // due to parallelized batching submissions or some such).
-        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, new QSLogTaskElasticSearchModel(logTask), true));
+        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, new QSTaskElasticSearchModel(task), true));
     }
 
     @Override
-    public void logTask(QSLogTickModel logTick) {
+    public void log(QSLogModel log) {
         // Append-only, hence generated ID.
-        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK_LOG, null, new QSLogTickElasticSearchModel(logTick)));
+        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK_LOG, null, new QSLogElasticSearchModel(log)));
     }
 
     @Override
-    public void completedTask(QSLogTaskModel logTask) {
+    public void completedTask(QSTaskModel task) {
         // Possibly updates the document submitted by startedTask, if it has been received by ElasticSearch
-        String documentId = logTaskIds.remove(logTask);
+        String documentId = logTaskIds.remove(task);
         if (documentId == null) {
             LOG.warn("Could not find original LogTask document id, which means I can't update the original entry. " +
                     "Writing the result anyhow.");
         }
-        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, new QSLogTaskElasticSearchModel(logTask)));
+        jres.quest(new JresIndexDocument(index, INDEX_TYPE_TASK, documentId, new QSTaskElasticSearchModel(task)));
     }
 
     @Override
-    public void workerHeartbeat(QSLogWorkerModel logWorker) {
-        jres.quest(new JresIndexDocument(index, INDEX_TYPE_WORKER, logWorker.workerId, logWorker));
+    public void workerHeartbeat(QSWorkerModel worker) {
+        jres.quest(new JresIndexDocument(index, INDEX_TYPE_WORKER, worker.workerId, worker));
     }
 
 }

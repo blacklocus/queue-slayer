@@ -20,7 +20,7 @@ import com.blacklocus.jres.request.index.JresRefresh;
 import com.blacklocus.qs.realm.FindTasks;
 import com.blacklocus.qs.realm.QSInfoService;
 import com.blacklocus.qs.worker.QSLogService;
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
+import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class ElasticSearchQSInfoServiceTest extends BaseJresTest {
         String index = "ElasticSearchQSInfoServiceTest.testFindTasks".toLowerCase();
         QSLogService logService = new ElasticSearchQSLogService(index, jres);
 
-        QSLogTaskModel t1 = new QSLogTaskModel();
+        QSTaskModel t1 = new QSTaskModel();
         t1.batchId = "bogus batch";
         t1.taskId = "bogus task1";
         t1.handler = "bogus handler";
@@ -49,7 +49,7 @@ public class ElasticSearchQSInfoServiceTest extends BaseJresTest {
         t1.finishedHappy = true;
         logService.startedTask(t1);
 
-        QSLogTaskModel t2 = new QSLogTaskModel();
+        QSTaskModel t2 = new QSTaskModel();
         t2.batchId = "bogus batch";
         t2.taskId = "bogus task1";
         t2.handler = "bogus handler";
@@ -61,7 +61,7 @@ public class ElasticSearchQSInfoServiceTest extends BaseJresTest {
         jres.quest(new JresRefresh(index));
 
         QSInfoService infoService = new ElasticSearchQSInfoService(index, jres);
-        List<QSLogTaskModel> logTasks = infoService.findTasks(new FindTasks());
+        List<QSTaskModel> logTasks = infoService.findTasks(new FindTasks());
         Assert.assertEquals(2, logTasks.size());
         Assert.assertEquals(t1.toString(), logTasks.get(0).toString());
         Assert.assertEquals(t2.toString(), logTasks.get(1).toString());

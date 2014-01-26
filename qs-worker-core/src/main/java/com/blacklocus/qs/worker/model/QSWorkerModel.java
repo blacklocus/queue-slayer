@@ -21,15 +21,15 @@ package com.blacklocus.qs.worker.model;
  *
  * @author Jason Dunkelberger (dirkraft)
  */
-public class QSLogWorkerModel {
+public class QSWorkerModel {
 
     public String workerId;
     public Long tick;
 
-    public QSLogWorkerModel() {
+    public QSWorkerModel() {
     }
 
-    public QSLogWorkerModel(String workerId, Long tick) {
+    public QSWorkerModel(String workerId, Long tick) {
         this.workerId = workerId;
         this.tick = tick;
     }

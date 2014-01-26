@@ -16,8 +16,7 @@
 package com.blacklocus.qs.worker;
 
 import com.blacklocus.qs.QueueItemHandler;
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
-import com.blacklocus.qs.worker.model.QSLogTickModel;
+import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 import com.google.common.collect.ImmutableMap;
@@ -92,13 +91,13 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
                 "message", throwable.getMessage(),
                 "stackTrace", ExceptionUtils.getStackTrace(throwable)
         ));
-        QSLogTickModel logTick = createLogTickModel(task, exceptionDetails);
+        QSLogModel logTick = createLogTickModel(task, exceptionDetails);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Task erred: {}", logTick, throwable);
         } else {
             LOG.info("Task erred: {}", logTick);
         }
-        logService.logTask(logTick);
+        logService.log(logTick);
 
         if (--task.remainingAttempts > 0) {
             taskService.resetTask(task);
@@ -112,7 +111,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     @Override
     public void onComplete(TaskHandle taskHandle) {
         QSTaskModel task = taskHandle.task;
-        QSLogTaskModel logTask = taskHandle.logTask;
+        QSTaskModel logTask = taskHandle.logTask;
 
         logTask.finished = System.currentTimeMillis();
         logTask.elapsed = logTask.finished - logTask.started;
@@ -125,8 +124,8 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     public void withFuture(TaskHandle taskHandle, Future<Pair<TaskHandle, Object>> future) {
     }
 
-    private QSLogTickModel createLogTickModel(QSTaskModel task, Object contents) {
-        return new QSLogTickModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), contents);
+    private QSLogModel createLogTickModel(QSTaskModel task, Object contents) {
+        return new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), contents);
     }
 
     class QSTaskLoggerDelegate implements QSTaskLogger {
@@ -138,9 +137,9 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
 
         @Override
         public void log(Object contents) {
-            QSLogTickModel logTick = createLogTickModel(task, contents);
+            QSLogModel logTick = createLogTickModel(task, contents);
             LOG.debug("{}", logTick); // prevents logTick.toString invocation unless debug-enabled
-            logService.logTask(logTick);
+            logService.log(logTick);
         }
     }
 

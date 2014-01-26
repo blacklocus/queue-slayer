@@ -15,17 +15,17 @@
  */
 package com.blacklocus.qs.worker.es;
 
-import com.blacklocus.qs.worker.model.QSLogTickModel;
+import com.blacklocus.qs.worker.model.QSLogModel;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
 /**
- * See rationale of {@link QSLogTaskElasticSearchModel}
+ * See rationale of {@link QSTaskElasticSearchModel}
  *
  * @author Jason Dunkelberger (dirkraft)
  */
-public class QSLogTickElasticSearchModel {
+public class QSLogElasticSearchModel {
 
     public String taskId;
     public String workerId;
@@ -33,15 +33,16 @@ public class QSLogTickElasticSearchModel {
     public Long tick;
     public HandlerWrapper contents;
 
-    public QSLogTickElasticSearchModel() {
+    public QSLogElasticSearchModel() {
     }
 
-    public QSLogTickElasticSearchModel(QSLogTickModel normalModel) {
+    @SuppressWarnings("unchecked")
+    public QSLogElasticSearchModel(QSLogModel normalModel) {
         this(normalModel.taskId, normalModel.workerId, normalModel.handler, normalModel.tick,
-                normalModel.contents instanceof Map ? (Map<?, ?>) normalModel.contents : ImmutableMap.of("value", normalModel.contents));
+                normalModel.contents instanceof Map ? (Map<String, ?>) normalModel.contents : ImmutableMap.of("value", normalModel.contents));
     }
 
-    public QSLogTickElasticSearchModel(String taskId, String workerId, String handler, Long tick, Map<?, ?> contents) {
+    public QSLogElasticSearchModel(String taskId, String workerId, String handler, Long tick, Map<String, ?> contents) {
         this.taskId = taskId;
         this.workerId = workerId;
         this.handler = handler;
@@ -49,7 +50,7 @@ public class QSLogTickElasticSearchModel {
         this.contents = new HandlerWrapper(handler, contents);
     }
 
-    public QSLogTickModel toNormalModel() {
-        return new QSLogTickModel(taskId, workerId, handler, tick, contents.get(handler));
+    public QSLogModel toNormalModel() {
+        return new QSLogModel(taskId, workerId, handler, tick, contents.get(handler));
     }
 }

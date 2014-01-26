@@ -20,9 +20,9 @@ import com.blacklocus.jres.request.index.JresRefresh;
 import com.blacklocus.jres.request.search.JresSearch;
 import com.blacklocus.jres.response.search.JresSearchReply;
 import com.blacklocus.qs.worker.QSLogService;
-import com.blacklocus.qs.worker.model.QSLogTaskModel;
-import com.blacklocus.qs.worker.model.QSLogTickModel;
-import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.blacklocus.qs.worker.model.QSLogModel;
+import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.model.QSWorkerModel;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,17 +34,17 @@ public class ElasticSearchQSLogServiceTest extends BaseJresTest {
         String index = "ElasticSearchQSLogServiceTest.testLifecycle".toLowerCase();
         QSLogService logService = new ElasticSearchQSLogService(index, jres);
 
-        QSLogWorkerModel logWorker = new QSLogWorkerModel("test_worker", 0L);
+        QSWorkerModel logWorker = new QSWorkerModel("test_worker", 0L);
 
-        QSLogTaskModel logTask = new QSLogTaskModel("test_batch", "test_task", "test_handler",
+        QSTaskModel logTask = new QSTaskModel("test_batch", "test_task", "test_handler", 1,
                 ImmutableMap.of("whatwhat?", "watch southpark"), "test_worker", 0L, null, null, false);
         logService.startedTask(logTask);
 
         logWorker.tick = 123L;
         logService.workerHeartbeat(logWorker);
 
-        logService.logTask(new QSLogTickModel(logTask.taskId, "test worker", "test_handler", System.currentTimeMillis(), "log message 1"));
-        logService.logTask(new QSLogTickModel(logTask.taskId, "test worker", "test_handler", System.currentTimeMillis(), "log message 2"));
+        logService.log(new QSLogModel(logTask.taskId, "test worker", "test_handler", System.currentTimeMillis(), "log message 1"));
+        logService.log(new QSLogModel(logTask.taskId, "test worker", "test_handler", System.currentTimeMillis(), "log message 2"));
 
         logTask.finishedHappy = true;
         logTask.finished = 5L;

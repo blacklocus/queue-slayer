@@ -21,12 +21,12 @@ import java.util.Map;
 /**
 * @author Jason Dunkelberger (dirkraft)
 */
-class HandlerWrapper extends HashMap<String, Map<?, ?>> {
+class HandlerWrapper extends HashMap<String, Map<String, ?>> {
 
     HandlerWrapper() {
     }
 
-    public HandlerWrapper(String handlerName, Map<?, ?> params) {
+    public HandlerWrapper(String handlerName, Map<String, ?> params) {
         put(handlerName, params);
     }
 }

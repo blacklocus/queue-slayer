@@ -1,5 +1,5 @@
 {
-  "taskLog": {
+  "log": {
     "dynamic": false,
     "date_detection": false,
     "numeric_detection": false,
@@ -8,13 +8,19 @@
     },
     "properties": {
       "taskId": {
-        "type": "string"
+        "type": "string",
+        "analyzer": "keyword"
       },
       "tick": {
         "type": "date"
       },
+      "handler": {
+        "type": "string",
+        "analyzer": "keyword"
+      },
       "workerId": {
-        "type": "string"
+        "type": "string",
+        "analyzer": "keyword"
       },
       "contents": {
         "type": "object",

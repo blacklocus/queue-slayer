@@ -16,7 +16,7 @@
 package com.blacklocus.qs.worker;
 
 import com.blacklocus.misc.ExceptingRunnable;
-import com.blacklocus.qs.worker.model.QSLogWorkerModel;
+import com.blacklocus.qs.worker.model.QSWorkerModel;
 
 public class QSWorkerHeartbeater extends ExceptingRunnable {
 
@@ -33,7 +33,7 @@ public class QSWorkerHeartbeater extends ExceptingRunnable {
     @Override
     protected void go() throws Exception {
         while (!Thread.interrupted()) {
-            logService.workerHeartbeat(new QSLogWorkerModel(workerIdService.getWorkerId(), System.currentTimeMillis()));
+            logService.workerHeartbeat(new QSWorkerModel(workerIdService.getWorkerId(), System.currentTimeMillis()));
             Thread.sleep(HEARTBEAT_INTERVAL_MS);
         }
     }
