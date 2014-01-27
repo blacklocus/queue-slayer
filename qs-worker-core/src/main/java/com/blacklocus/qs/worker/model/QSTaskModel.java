@@ -51,6 +51,7 @@ public class QSTaskModel {
         this.batchId = batchId;
         this.taskId = taskId;
         this.handler = handler;
+        this.remainingAttempts = remainingAttempts;
         this.params = params;
         this.workerId = workerId;
         this.started = started;
