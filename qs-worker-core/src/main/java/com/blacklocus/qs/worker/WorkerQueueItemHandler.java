@@ -66,7 +66,10 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
             throw new RuntimeException("No worker available for handler identifier: " + task.handler);
         }
 
-        return worker.undertake(new MapConfiguration(task.params), new QSTaskLoggerDelegate(task));
+        MapConfiguration params = new MapConfiguration(task.params);
+        // Some of the java-doc on the following method is wrong. Using the map constructor is correct.
+        params.setDelimiterParsingDisabled(true);
+        return worker.undertake(params, new QSTaskLoggerDelegate(task));
     }
 
     @Override
