@@ -31,6 +31,9 @@
       "finishedHappy" : {
         "type" : "boolean"
       },
+      "remainingAttempts": {
+        "type": "integer"
+      },
       "workerId" : {
         "type" : "string",
         "analyzer": "keyword"

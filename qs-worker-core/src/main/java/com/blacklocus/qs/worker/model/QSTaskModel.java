@@ -65,6 +65,7 @@ public class QSTaskModel {
                 .add("batchId", batchId)
                 .add("taskId", taskId)
                 .add("handler", handler)
+                .add("remainingAttempts", remainingAttempts)
                 .add("params", params)
                 .add("workerId", workerId)
                 .add("started", started)
