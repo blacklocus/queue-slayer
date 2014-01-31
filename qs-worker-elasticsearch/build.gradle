@@ -12,4 +12,5 @@ dependencies {
     compile deps.jres
 
     testCompile deps.jres_test
+
 }

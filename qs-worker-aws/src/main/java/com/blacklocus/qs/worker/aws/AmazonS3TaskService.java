@@ -22,7 +22,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.util.IdSupplier;
-import com.google.common.collect.ImmutableMap;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import java.util.Iterator;
 
@@ -37,6 +37,7 @@ public class AmazonS3TaskService implements QSTaskService {
     private final String prefix;
     private final String delimiter;
     private final AmazonS3 s3;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private ObjectListing objectListing;
     private String listingBatchId;
@@ -67,7 +68,7 @@ public class AmazonS3TaskService implements QSTaskService {
         }
         S3ObjectSummary obj = iterator.next();
         assert obj != null;
-        return new QSTaskModel(listingBatchId, IdSupplier.newId(), taskHandlerIdentifier, 5, ImmutableMap.<String, Object>of(PARAM_OBJECT, obj));
+        return new QSTaskModel(listingBatchId, IdSupplier.newId(), taskHandlerIdentifier, 5, objectMapper.valueToTree(obj));
     }
 
     @Override

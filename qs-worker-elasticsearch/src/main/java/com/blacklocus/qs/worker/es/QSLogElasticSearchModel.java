@@ -17,6 +17,7 @@ package com.blacklocus.qs.worker.es;
 
 import com.blacklocus.qs.worker.model.QSLogModel;
 import com.google.common.collect.ImmutableMap;
+import org.codehaus.jackson.JsonNode;
 
 import java.util.Map;
 
@@ -38,11 +39,10 @@ public class QSLogElasticSearchModel {
 
     @SuppressWarnings("unchecked")
     public QSLogElasticSearchModel(QSLogModel normalModel) {
-        this(normalModel.taskId, normalModel.workerId, normalModel.handler, normalModel.tick,
-                normalModel.contents instanceof Map ? (Map<String, ?>) normalModel.contents : ImmutableMap.of("value", normalModel.contents));
+        this(normalModel.taskId, normalModel.workerId, normalModel.handler, normalModel.tick, normalModel.contents);
     }
 
-    public QSLogElasticSearchModel(String taskId, String workerId, String handler, Long tick, Map<String, ?> contents) {
+    public QSLogElasticSearchModel(String taskId, String workerId, String handler, Long tick, JsonNode contents) {
         this.taskId = taskId;
         this.workerId = workerId;
         this.handler = handler;

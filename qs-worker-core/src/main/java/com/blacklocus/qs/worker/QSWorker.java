@@ -15,15 +15,17 @@
  */
 package com.blacklocus.qs.worker;
 
-import org.apache.commons.configuration.Configuration;
+import org.codehaus.jackson.type.TypeReference;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public interface QSWorker {
+public interface QSWorker<T> {
 
     String getHandlerName();
 
-    Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception;
+    TypeReference<T> getTypeReference();
+
+    void undertake(T params, QSTaskLogger taskLogger) throws Exception;
 
 }

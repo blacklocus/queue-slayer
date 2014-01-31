@@ -20,9 +20,10 @@ import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,15 +41,18 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     private final QSTaskService taskService;
     private final QSLogService logService;
     private final QSWorkerIdService workerIdService;
-    private final Map<String, QSWorker> workers;
+    private final Map<String, QSWorker<?>> workers;
+    private final ObjectMapper objectMapper;
 
     WorkerQueueItemHandler(QueueingStrategy<QSTaskModel> queueingStrategy, QSTaskService taskService,
-                           QSLogService logService, QSWorkerIdService workerIdService, Map<String, QSWorker> workers) {
+                           QSLogService logService, QSWorkerIdService workerIdService, Map<String, QSWorker<?>> workers,
+                           ObjectMapper objectMapper) {
         this.queueingStrategy = queueingStrategy;
         this.taskService = taskService;
         this.logService = logService;
         this.workerIdService = workerIdService;
         this.workers = workers;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -66,10 +70,9 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
             throw new RuntimeException("No worker available for handler identifier: " + task.handler);
         }
 
-        MapConfiguration params = new MapConfiguration(task.params);
-        // Some of the java-doc on the following method is wrong. Using the map constructor is correct.
-        params.setDelimiterParsingDisabled(true);
-        return worker.undertake(params, new QSTaskLoggerDelegate(task));
+        Object o = objectMapper.readValue(task.params, worker.getTypeReference());
+        worker.undertake(o, new QSTaskLoggerDelegate(task));
+        return null;
     }
 
     @Override
@@ -128,7 +131,8 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     }
 
     private QSLogModel createLogTickModel(QSTaskModel task, Object contents) {
-        return new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), contents);
+        JsonNode logContent = objectMapper.valueToTree(contents);
+        return new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), logContent);
     }
 
     class QSTaskLoggerDelegate implements QSTaskLogger {

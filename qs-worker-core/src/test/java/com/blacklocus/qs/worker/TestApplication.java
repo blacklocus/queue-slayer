@@ -19,9 +19,9 @@ import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.simple.BlockingQueueQSTaskService;
 import com.blacklocus.qs.worker.simple.HostNameQSWorkerIdService;
 import com.blacklocus.qs.worker.simple.SystemOutQSLogService;
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.math.RandomUtils;
+import org.codehaus.jackson.node.IntNode;
+import org.codehaus.jackson.type.TypeReference;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -60,8 +60,8 @@ public class TestApplication implements Runnable {
         @Override
         public Void call() throws Exception {
             while (!Thread.interrupted()) {
-                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), 1, ImmutableMap.<String, Object>of("value", 2)));
-                Thread.sleep(1L);
+                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), 1, new IntNode(2)));
+                Thread.sleep(100L);
             }
             return null;
         }
@@ -79,7 +79,7 @@ public class TestApplication implements Runnable {
     }
 }
 
-class TestWorkerPrintIdentity implements QSWorker {
+class TestWorkerPrintIdentity implements QSWorker<Integer> {
 
     public static final String HANDLER_NAME = "identity";
 
@@ -89,14 +89,18 @@ class TestWorkerPrintIdentity implements QSWorker {
     }
 
     @Override
-    public Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception {
-        System.out.println(params.getInt("value"));
+    public TypeReference<Integer> getTypeReference() {
+        return new TypeReference<Integer>() {};
+    }
+
+    @Override
+    public void undertake(Integer value, QSTaskLogger taskLogger) throws Exception {
+        System.out.println(value);
         Thread.sleep(1000L);
-        return null;
     }
 }
 
-class TestWorkerPrintSquare implements QSWorker {
+class TestWorkerPrintSquare implements QSWorker<Integer> {
 
     public static final String HANDLER_NAME = "square";
 
@@ -106,14 +110,18 @@ class TestWorkerPrintSquare implements QSWorker {
     }
 
     @Override
-    public Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception {
-        System.out.println(Math.pow((double) params.getInt("value"), 2));
+    public TypeReference<Integer> getTypeReference() {
+        return new TypeReference<Integer>() {};
+    }
+
+    @Override
+    public void undertake(Integer value, QSTaskLogger taskLogger) throws Exception {
+        System.out.println(Math.pow(value, 2));
         Thread.sleep(1000L);
-        return null;
     }
 }
 
-class TestWorkerPrintZero implements QSWorker {
+class TestWorkerPrintZero implements QSWorker<Integer> {
 
     public static final String HANDLER_NAME = "zero";
 
@@ -123,14 +131,18 @@ class TestWorkerPrintZero implements QSWorker {
     }
 
     @Override
-    public Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception {
+    public TypeReference<Integer> getTypeReference() {
+        return new TypeReference<Integer>() {};
+    }
+
+    @Override
+    public void undertake(Integer v, QSTaskLogger taskLogger) throws Exception {
         System.out.println(0);
         Thread.sleep(1000L);
-        return null;
     }
 }
 
-class TestWorkerUnmotivated implements QSWorker {
+class TestWorkerUnmotivated implements QSWorker<Integer> {
 
     public static final String HANDLER_NAME = "unmotivated";
 
@@ -140,9 +152,13 @@ class TestWorkerUnmotivated implements QSWorker {
     }
 
     @Override
-    public Object undertake(Configuration params, QSTaskLogger taskLogger) throws Exception {
+    public TypeReference<Integer> getTypeReference() {
+        return new TypeReference<Integer>() {};
+    }
+
+    @Override
+    public void undertake(Integer v, QSTaskLogger taskLogger) throws Exception {
         taskLogger.log("This is dum.");
         Thread.sleep(1000L);
-        return null;
     }
 }

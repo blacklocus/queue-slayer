@@ -27,6 +27,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,9 +50,10 @@ public class QSWorkerBuilder {
 
     private final List<QSTaskService> taskServices = new ArrayList<QSTaskService>();
     private final CompositeConfiguration configuration = new CompositeConfiguration();
-    private final Map<String, QSWorker> workers = new HashMap<String, QSWorker>();
+    private final Map<String, QSWorker<?>> workers = new HashMap<String, QSWorker<?>>();
     private QSLogService logService;
     private QSWorkerIdService workerIdService;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public QSWorkerBuilder configuration(Configuration configuration) {
         this.configuration.addConfiguration(configuration);
@@ -73,10 +75,15 @@ public class QSWorkerBuilder {
         return this;
     }
 
-    public QSWorkerBuilder workers(QSWorker... workers) {
-        for (QSWorker worker : workers) {
+    public QSWorkerBuilder workers(QSWorker<?>... workers) {
+        for (QSWorker<?> worker : workers) {
             this.workers.put(worker.getHandlerName(), worker);
         }
+        return this;
+    }
+
+    public QSWorkerBuilder objectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
         return this;
     }
 
@@ -85,6 +92,7 @@ public class QSWorkerBuilder {
         Preconditions.checkState(workers.size() > 0, "At least one QSWorker must be present.");
         Preconditions.checkNotNull(logService, "A QSLogService implementation is required.");
         Preconditions.checkNotNull(workerIdService, "A QSWorkerIdService implementation is required.");
+        Preconditions.checkNotNull(objectMapper, "An ObjectMapper must be available.");
     }
 
     public QueueReader build() {
@@ -116,7 +124,7 @@ public class QSWorkerBuilder {
 
         return new QueueReader<TaskHandle, TaskHandle, Object>(
                 taskControlIterable,
-                new WorkerQueueItemHandler(queueingStrategy, taskService, logService, workerIdService, workers),
+                new WorkerQueueItemHandler(queueingStrategy, taskService, logService, workerIdService, workers, objectMapper),
                 workerExecutorService,
                 0
         );
