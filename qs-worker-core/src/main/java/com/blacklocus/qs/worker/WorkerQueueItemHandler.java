@@ -89,7 +89,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
 
         QSTaskModel task = taskHandle.task;
         taskService.closeTask(task);
-        LOG.debug("Task succeeded: {}", task);
+        LOG.info("Task succeeded: {}", task);
 
         taskHandle.logTask.finishedHappy = true;
     }
