@@ -1,0 +1,7 @@
+dependencies {
+
+    compile deps.jackson_core_asl
+    compile deps.jackson_mapper_asl
+    compile deps.guava
+
+}
