@@ -74,11 +74,8 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
         final Object params;
         if (task.params instanceof JsonNode) {
             params = objectMapper.readValue((JsonNode) task.params, worker.getTypeReference());
-        } else if (((Class<?>) worker.getTypeReference().getType()).isAssignableFrom(task.params.getClass())) {
-            params = task.params;
         } else {
-            throw new RuntimeException("Worker handles " + worker.getTypeReference().getType() +
-                    " but params was " + task.params.getClass());
+            params = task.params;
         }
         return worker.undertake(params, new QSTaskLoggerDelegate(task));
     }
