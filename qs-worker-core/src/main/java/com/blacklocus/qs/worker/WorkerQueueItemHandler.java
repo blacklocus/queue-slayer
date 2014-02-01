@@ -140,8 +140,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     }
 
     private QSLogModel createLogTickModel(QSTaskModel task, Object contents) {
-        JsonNode logContent = objectMapper.valueToTree(contents);
-        return new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), logContent);
+        return new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), contents);
     }
 
     class QSTaskLoggerDelegate implements QSTaskLogger {

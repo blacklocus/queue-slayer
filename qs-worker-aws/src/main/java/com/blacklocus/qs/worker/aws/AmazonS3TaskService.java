@@ -68,7 +68,7 @@ public class AmazonS3TaskService implements QSTaskService {
         }
         S3ObjectSummary obj = iterator.next();
         assert obj != null;
-        return new QSTaskModel(listingBatchId, IdSupplier.newId(), taskHandlerIdentifier, 5, objectMapper.valueToTree(obj));
+        return new QSTaskModel(listingBatchId, IdSupplier.newId(), taskHandlerIdentifier, 5, obj);
     }
 
     @Override

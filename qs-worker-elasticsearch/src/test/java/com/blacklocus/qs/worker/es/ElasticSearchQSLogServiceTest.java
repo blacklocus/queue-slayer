@@ -24,13 +24,10 @@ import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.model.QSWorkerModel;
 import com.google.common.collect.ImmutableMap;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class ElasticSearchQSLogServiceTest extends BaseJresTest {
-
-    ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     public void testLifecycle() {
@@ -40,16 +37,14 @@ public class ElasticSearchQSLogServiceTest extends BaseJresTest {
         QSWorkerModel logWorker = new QSWorkerModel("test_worker", 0L);
 
         QSTaskModel logTask = new QSTaskModel("test_batch", "test_task", "test_handler", 1,
-                objectMapper.valueToTree(ImmutableMap.of("whatwhat?", "watch southpark")), "test_worker", 0L, null, null, false);
+                ImmutableMap.of("whatwhat?", "watch southpark"), "test_worker", 0L, null, null, false);
         logService.startedTask(logTask);
 
         logWorker.tick = 123L;
         logService.workerHeartbeat(logWorker);
 
-        logService.log(new QSLogModel(logTask.taskId, "test worker", "test_handler", System.currentTimeMillis(),
-                objectMapper.valueToTree("log message 1")));
-        logService.log(new QSLogModel(logTask.taskId, "test worker", "test_handler", System.currentTimeMillis(),
-                objectMapper.valueToTree("log message 2")));
+        logService.log(new QSLogModel(logTask.taskId, "test worker", "test_handler", System.currentTimeMillis(), "log message 1"));
+        logService.log(new QSLogModel(logTask.taskId, "test worker", "test_handler", System.currentTimeMillis(), "log message 2"));
 
         logTask.finishedHappy = true;
         logTask.finished = 5L;
