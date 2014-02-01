@@ -16,6 +16,8 @@
 package com.blacklocus.qs.worker.model;
 
 import com.google.common.base.Objects;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
@@ -26,6 +28,7 @@ public class QSTaskModel {
     public String taskId;
     public String handler;
     public Integer remainingAttempts;
+    @JsonDeserialize(as = JsonNode.class)
     public Object params;
 
     public String workerId;
