@@ -26,6 +26,6 @@ public interface QSWorker<T> {
 
     TypeReference<T> getTypeReference();
 
-    void undertake(T params, QSTaskLogger taskLogger) throws Exception;
+    Object undertake(T params, QSTaskLogger taskLogger) throws Exception;
 
 }

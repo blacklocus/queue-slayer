@@ -93,9 +93,10 @@ class TestWorkerPrintIdentity implements QSWorker<Integer> {
     }
 
     @Override
-    public void undertake(Integer value, QSTaskLogger taskLogger) throws Exception {
+    public Object undertake(Integer value, QSTaskLogger taskLogger) throws Exception {
         System.out.println(value);
         Thread.sleep(1000L);
+        return null;
     }
 }
 
@@ -114,9 +115,10 @@ class TestWorkerPrintSquare implements QSWorker<Integer> {
     }
 
     @Override
-    public void undertake(Integer value, QSTaskLogger taskLogger) throws Exception {
+    public Object undertake(Integer value, QSTaskLogger taskLogger) throws Exception {
         System.out.println(Math.pow(value, 2));
         Thread.sleep(1000L);
+        return null;
     }
 }
 
@@ -135,9 +137,10 @@ class TestWorkerPrintZero implements QSWorker<Integer> {
     }
 
     @Override
-    public void undertake(Integer v, QSTaskLogger taskLogger) throws Exception {
+    public Object undertake(Integer v, QSTaskLogger taskLogger) throws Exception {
         System.out.println(0);
         Thread.sleep(1000L);
+        return null;
     }
 }
 
@@ -156,8 +159,9 @@ class TestWorkerUnmotivated implements QSWorker<Integer> {
     }
 
     @Override
-    public void undertake(Integer v, QSTaskLogger taskLogger) throws Exception {
+    public Object undertake(Integer v, QSTaskLogger taskLogger) throws Exception {
         taskLogger.log("This is dum.");
         Thread.sleep(1000L);
+        return null;
     }
 }

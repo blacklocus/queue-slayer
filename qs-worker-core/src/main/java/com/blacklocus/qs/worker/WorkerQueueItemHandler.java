@@ -80,8 +80,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
             throw new RuntimeException("Worker handles " + worker.getTypeReference().getType() +
                     " but params was " + task.params.getClass());
         }
-        worker.undertake(params, new QSTaskLoggerDelegate(task));
-        return null;
+        return worker.undertake(params, new QSTaskLoggerDelegate(task));
     }
 
     @Override
