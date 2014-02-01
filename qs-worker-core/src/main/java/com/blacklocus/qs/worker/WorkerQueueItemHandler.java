@@ -62,6 +62,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
         return task;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Object process(TaskHandle taskHandle) throws Exception {
         QSTaskModel task = taskHandle.task;
@@ -70,8 +71,16 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
             throw new RuntimeException("No worker available for handler identifier: " + task.handler);
         }
 
-        Object o = objectMapper.readValue(task.params, worker.getTypeReference());
-        worker.undertake(o, new QSTaskLoggerDelegate(task));
+        final Object params;
+        if (task.params instanceof JsonNode) {
+            params = objectMapper.readValue((JsonNode) task.params, worker.getTypeReference());
+        } else if (((Class<?>) worker.getTypeReference().getType()).isAssignableFrom(task.params.getClass())) {
+            params = task.params;
+        } else {
+            throw new RuntimeException("Worker handles " + worker.getTypeReference().getType() +
+                    " but params was " + task.params.getClass());
+        }
+        worker.undertake(params, new QSTaskLoggerDelegate(task));
         return null;
     }
 

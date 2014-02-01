@@ -16,10 +16,6 @@
 package com.blacklocus.qs.worker.es;
 
 import com.blacklocus.qs.worker.model.QSLogModel;
-import com.google.common.collect.ImmutableMap;
-import org.codehaus.jackson.JsonNode;
-
-import java.util.Map;
 
 /**
  * See rationale of {@link QSTaskElasticSearchModel}
@@ -42,7 +38,7 @@ public class QSLogElasticSearchModel {
         this(normalModel.taskId, normalModel.workerId, normalModel.handler, normalModel.tick, normalModel.contents);
     }
 
-    public QSLogElasticSearchModel(String taskId, String workerId, String handler, Long tick, JsonNode contents) {
+    public QSLogElasticSearchModel(String taskId, String workerId, String handler, Long tick, Object contents) {
         this.taskId = taskId;
         this.workerId = workerId;
         this.handler = handler;

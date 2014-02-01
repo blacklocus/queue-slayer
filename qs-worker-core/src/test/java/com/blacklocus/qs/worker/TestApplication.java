@@ -20,7 +20,6 @@ import com.blacklocus.qs.worker.simple.BlockingQueueQSTaskService;
 import com.blacklocus.qs.worker.simple.HostNameQSWorkerIdService;
 import com.blacklocus.qs.worker.simple.SystemOutQSLogService;
 import org.apache.commons.lang.math.RandomUtils;
-import org.codehaus.jackson.node.IntNode;
 import org.codehaus.jackson.type.TypeReference;
 
 import java.util.concurrent.BlockingQueue;
@@ -60,7 +59,7 @@ public class TestApplication implements Runnable {
         @Override
         public Void call() throws Exception {
             while (!Thread.interrupted()) {
-                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), 1, new IntNode(2)));
+                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), 1, 2));
                 Thread.sleep(100L);
             }
             return null;

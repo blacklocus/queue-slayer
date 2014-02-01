@@ -16,9 +16,6 @@
 package com.blacklocus.qs.worker.es;
 
 import com.blacklocus.qs.worker.model.QSTaskModel;
-import org.codehaus.jackson.JsonNode;
-
-import java.util.Map;
 
 /**
  * Because ElasticSearch dynamically generates type mappings, and parameters between different types of tasks will
@@ -51,7 +48,7 @@ public class QSTaskElasticSearchModel {
                 normalModel.workerId, normalModel.started, normalModel.finished, normalModel.elapsed, normalModel.finishedHappy);
     }
 
-    public QSTaskElasticSearchModel(String batchId, String taskId, String handler, Integer remainingAttempts, JsonNode params,
+    public QSTaskElasticSearchModel(String batchId, String taskId, String handler, Integer remainingAttempts, Object params,
                                     String workerId, Long started, Long finished, Long elapsed, Boolean finishedHappy) {
         this.batchId = batchId;
         this.taskId = taskId;

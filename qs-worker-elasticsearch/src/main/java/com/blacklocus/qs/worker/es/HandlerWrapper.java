@@ -15,20 +15,17 @@
  */
 package com.blacklocus.qs.worker.es;
 
-import org.codehaus.jackson.JsonNode;
-
 import java.util.HashMap;
-import java.util.Map;
 
 /**
 * @author Jason Dunkelberger (dirkraft)
 */
-class HandlerWrapper extends HashMap<String, JsonNode> {
+class HandlerWrapper extends HashMap<String, Object> {
 
     HandlerWrapper() {
     }
 
-    public HandlerWrapper(String handlerName, JsonNode params) {
+    public HandlerWrapper(String handlerName, Object params) {
         put(handlerName, params);
     }
 }

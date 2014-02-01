@@ -16,7 +16,6 @@
 package com.blacklocus.qs.worker.model;
 
 import com.google.common.base.Objects;
-import org.codehaus.jackson.JsonNode;
 
 /**
  * Any free-form log message related to some task in processing.
@@ -29,9 +28,9 @@ public class QSLogModel {
     public String workerId;
     public String handler;
     public Long tick;
-    public JsonNode contents;
+    public Object contents;
 
-    public QSLogModel(String taskId, String workerId, String handler, Long tick, JsonNode contents) {
+    public QSLogModel(String taskId, String workerId, String handler, Long tick, Object contents) {
         this.taskId = taskId;
         this.workerId = workerId;
         this.handler = handler;

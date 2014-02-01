@@ -16,7 +16,6 @@
 package com.blacklocus.qs.worker.model;
 
 import com.google.common.base.Objects;
-import org.codehaus.jackson.JsonNode;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
@@ -27,7 +26,7 @@ public class QSTaskModel {
     public String taskId;
     public String handler;
     public Integer remainingAttempts;
-    public JsonNode params;
+    public Object params;
 
     public String workerId;
     public Long started;
@@ -41,11 +40,11 @@ public class QSTaskModel {
     /**
      * Constructor with fields important to queued jobs. Omits all tracking and status-oriented fields.
      */
-    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, JsonNode params) {
+    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, Object params) {
         this(batchId, taskId, handler, remainingAttempts, params, null, null, null, null, null);
     }
 
-    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, JsonNode params,
+    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, Object params,
                        String workerId, Long started, Long finished, Long elapsed, Boolean finishedHappy) {
         this.batchId = batchId;
         this.taskId = taskId;
