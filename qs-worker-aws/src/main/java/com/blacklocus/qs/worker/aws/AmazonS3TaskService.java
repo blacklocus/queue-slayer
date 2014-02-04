@@ -22,7 +22,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.util.IdSupplier;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Iterator;
 

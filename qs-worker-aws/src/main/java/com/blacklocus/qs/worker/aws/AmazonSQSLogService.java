@@ -21,7 +21,7 @@ import com.blacklocus.qs.worker.QSLogService;
 import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.model.QSWorkerModel;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 

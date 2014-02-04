@@ -19,8 +19,8 @@ import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.simple.BlockingQueueQSTaskService;
 import com.blacklocus.qs.worker.simple.HostNameQSWorkerIdService;
 import com.blacklocus.qs.worker.simple.SystemOutQSLogService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.lang.math.RandomUtils;
-import org.codehaus.jackson.type.TypeReference;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;

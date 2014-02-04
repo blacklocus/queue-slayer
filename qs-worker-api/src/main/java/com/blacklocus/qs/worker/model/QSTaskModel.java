@@ -15,9 +15,9 @@
  */
 package com.blacklocus.qs.worker.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Objects;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 /**
  * @author Jason Dunkelberger (dirkraft)

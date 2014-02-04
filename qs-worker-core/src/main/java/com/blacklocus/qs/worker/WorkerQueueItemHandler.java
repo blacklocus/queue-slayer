@@ -18,12 +18,12 @@ package com.blacklocus.qs.worker;
 import com.blacklocus.qs.QueueItemHandler;
 import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
 
         final Object params;
         if (task.params instanceof JsonNode) {
-            params = objectMapper.readValue((JsonNode) task.params, worker.getTypeReference());
+            params = objectMapper.readValue(((JsonNode) task.params).traverse(), worker.getTypeReference());
         } else {
             params = task.params;
         }

@@ -19,6 +19,7 @@ import com.blacklocus.misc.Runnables;
 import com.blacklocus.qs.QueueReader;
 import com.blacklocus.qs.worker.config.QSConfig;
 import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rholder.moar.concurrent.QueueingStrategies;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 import com.github.rholder.moar.concurrent.StrategicExecutors;
@@ -27,7 +28,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;

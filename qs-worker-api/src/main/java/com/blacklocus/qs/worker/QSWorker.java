@@ -15,7 +15,7 @@
  */
 package com.blacklocus.qs.worker;
 
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
