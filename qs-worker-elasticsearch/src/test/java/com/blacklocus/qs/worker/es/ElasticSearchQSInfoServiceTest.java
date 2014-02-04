@@ -21,8 +21,8 @@ import com.blacklocus.qs.realm.FindTasks;
 import com.blacklocus.qs.realm.QSInfoService;
 import com.blacklocus.qs.worker.QSLogService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
