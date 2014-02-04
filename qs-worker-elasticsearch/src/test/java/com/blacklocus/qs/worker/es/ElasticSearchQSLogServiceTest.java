@@ -57,6 +57,6 @@ public class ElasticSearchQSLogServiceTest extends BaseJresTest {
 
         jres.quest(new JresRefresh(index));
         JresSearchReply reply = jres.quest(new JresSearch(index, null));
-        Assert.assertEquals(new Integer(4), reply.getHits().getTotal()); // weak test
+        Assert.assertEquals((Object) 4L, reply.getHits().getTotal()); // weak test
     }
 }
