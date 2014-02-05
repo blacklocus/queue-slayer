@@ -18,7 +18,7 @@ package com.blacklocus.qs.worker;
 import com.blacklocus.misc.ExceptingRunnable;
 import com.blacklocus.qs.worker.model.QSWorkerModel;
 
-public class QSWorkerHeartbeater extends ExceptingRunnable {
+class QSWorkerHeartbeater extends ExceptingRunnable {
 
     public static final long HEARTBEAT_INTERVAL_MS = 60 * 1000;
 

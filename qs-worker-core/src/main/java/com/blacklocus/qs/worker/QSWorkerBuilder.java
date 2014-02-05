@@ -19,6 +19,7 @@ import com.blacklocus.misc.Runnables;
 import com.blacklocus.qs.QueueReader;
 import com.blacklocus.qs.worker.config.QSConfig;
 import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.util.task.ThreadedFIFOQSTaskService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rholder.moar.concurrent.QueueingStrategies;
 import com.github.rholder.moar.concurrent.QueueingStrategy;

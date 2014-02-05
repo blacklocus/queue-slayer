@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blacklocus.qs.worker;
+package com.blacklocus.qs.worker.util.task;
 
 import com.blacklocus.misc.ExceptingRunnable;
 import com.blacklocus.misc.InfiniteRunnable;
+import com.blacklocus.qs.worker.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 
@@ -30,7 +31,7 @@ import java.util.concurrent.SynchronousQueue;
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-class ThreadedFIFOQSTaskService implements QSTaskService {
+public class ThreadedFIFOQSTaskService implements QSTaskService {
 
     private final QueueingStrategy<QSTaskModel> queueingStrategy;
 
@@ -38,7 +39,7 @@ class ThreadedFIFOQSTaskService implements QSTaskService {
     private final SynchronousQueue<QSTaskModel> transferQueue = new SynchronousQueue<QSTaskModel>(true);
     private final Map<QSTaskModel, QSTaskService> taskServices = new ConcurrentHashMap<QSTaskModel, QSTaskService>();
 
-    ThreadedFIFOQSTaskService(final QueueingStrategy<QSTaskModel> queueingStrategy, Collection<QSTaskService> taskServices) {
+    public ThreadedFIFOQSTaskService(final QueueingStrategy<QSTaskModel> queueingStrategy, Collection<QSTaskService> taskServices) {
         this.queueingStrategy = queueingStrategy;
 
         ExecutorService executorService = Executors.newCachedThreadPool();
