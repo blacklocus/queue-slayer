@@ -30,6 +30,9 @@ public class QSLogModel {
     public Long tick;
     public Object contents;
 
+    public QSLogModel() {
+    }
+
     public QSLogModel(String taskId, String workerId, String handler, Long tick, Object contents) {
         this.taskId = taskId;
         this.workerId = workerId;
