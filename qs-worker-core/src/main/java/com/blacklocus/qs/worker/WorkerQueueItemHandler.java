@@ -81,7 +81,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     }
 
     @Override
-    public void onSuccess(TaskHandle taskHandle, Object result) {
+    public void onSuccess(TaskHandle taskHandle, TaskHandle convertedTaskHandle, Object result) {
         queueingStrategy.onBeforeRemove();
 
         QSTaskModel task = taskHandle.task;
@@ -92,7 +92,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     }
 
     @Override
-    public void onError(TaskHandle taskHandle, Throwable throwable) {
+    public void onError(TaskHandle taskHandle, TaskHandle convertedTaskHandle, Throwable throwable) {
         queueingStrategy.onBeforeRemove();
 
         QSTaskModel task = taskHandle.task;
@@ -120,7 +120,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     }
 
     @Override
-    public void onComplete(TaskHandle taskHandle) {
+    public void onComplete(TaskHandle taskHandle, TaskHandle convertedTaskHandle, Object result) {
         QSTaskModel task = taskHandle.task;
         QSTaskModel logTask = taskHandle.logTask;
 

@@ -85,17 +85,19 @@ public class QueueReader<Q, T, R> extends ExceptingRunnable {
                     for (final Q queueItem : queueItems) {
                         handler.withFuture(queueItem, executor.submit(new Callable<Pair<Q, R>>() {
                             public Pair<Q, R> call() throws Exception {
+                                T converted = null;
+                                R result = null;
                                 try {
-                                    T converted = handler.convert(queueItem);
-                                    R result = handler.process(converted);
-                                    handler.onSuccess(queueItem, result);
+                                    converted = handler.convert(queueItem);
+                                    result = handler.process(converted);
+                                    handler.onSuccess(queueItem, converted, result);
                                     return Pair.of(queueItem, result);
                                 } catch (Throwable t) {
                                     LOG.error("An error occurred while processing item {}", queueItem, t);
-                                    handler.onError(queueItem, t);
+                                    handler.onError(queueItem, converted, t);
                                     throw new RuntimeException(t);
                                 } finally {
-                                    handler.onComplete(queueItem);
+                                    handler.onComplete(queueItem, converted, result);
                                 }
                             }
                         }));

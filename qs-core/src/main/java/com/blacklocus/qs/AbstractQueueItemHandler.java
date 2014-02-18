@@ -25,17 +25,17 @@ import java.util.concurrent.Future;
 public abstract class AbstractQueueItemHandler<Q, T, R> implements QueueItemHandler<Q, T, R> {
 
     @Override
-    public void onSuccess(Q queueItem, R result) {
+    public void onSuccess(Q queueItem, T convertedQueueItem, R result) {
         // do nothing
     }
 
     @Override
-    public void onError(Q queueItem, Throwable throwable) {
+    public void onError(Q queueItem, T convertedQueueItem, Throwable throwable) {
         // do nothing
     }
 
     @Override
-    public void onComplete(Q queueItem) {
+    public void onComplete(Q queueItem, T convertedQueueItem, R result) {
         // do nothing
     }
 
