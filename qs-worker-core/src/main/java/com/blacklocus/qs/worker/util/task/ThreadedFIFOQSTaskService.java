@@ -51,7 +51,7 @@ public class ThreadedFIFOQSTaskService implements QSTaskService {
 
     @Override
     public void putTask(QSTaskModel task) {
-        throw new RuntimeException("ThreadedRoundRobinQSTaskService is purposed for retrieving tasks and cannot " +
+        throw new RuntimeException("ThreadedFIFOQSTaskService is purposed for retrieving tasks and cannot " +
                 "determine which constituent Task Service should be used to place a new task.");
     }
 
