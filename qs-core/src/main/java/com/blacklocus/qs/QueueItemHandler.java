@@ -45,27 +45,31 @@ public interface QueueItemHandler<Q, T, R> {
      * Called when processing completes successfully on the queue item processing
      * thread.
      *
-     * @param queueItem the original queue item that was successfully processed
-     * @param result    the result returned from successful queue item handling
+     * @param queueItem          the original queue item that was successfully processed
+     * @param convertedQueueItem the converted target queue item
+     * @param result             the result returned from successful queue item handling
      */
-    void onSuccess(Q queueItem, R result);
+    void onSuccess(Q queueItem, T convertedQueueItem, R result);
 
     /**
      * Called when an Exception occurs while processing the given queue item on
      * the queue item processing thread.
      *
-     * @param queueItem the queue item received
-     * @param throwable the error that occurred while trying to process the queue item
+     * @param queueItem          the queue item received
+     * @param convertedQueueItem the converted target queue item, may be null if convert failed
+     * @param throwable          the error that occurred while trying to process the queue item
      */
-    void onError(Q queueItem, Throwable throwable);
+    void onError(Q queueItem, T convertedQueueItem, Throwable throwable);
 
     /**
      * Called whether the processing results in success or failure on the
      * queue item processing thread.
      *
-     * @param queueItem the original queue item being handled
+     * @param queueItem          the original queue item being handled
+     * @param convertedQueueItem the converted target queue item, may be null if convert failed
+     * @param result             the result returned from successful queue item handling or null if it failed
      */
-    void onComplete(Q queueItem);
+    void onComplete(Q queueItem, T convertedQueueItem, R result);
 
     /**
      * Called after the queue item is retrieved off of the queue and handed off to
