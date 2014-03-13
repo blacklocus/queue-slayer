@@ -49,7 +49,12 @@ import static com.github.rholder.moar.concurrent.StrategicExecutors.DEFAULT_SMOO
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public class QSAssemblies {
+public class QSAssembly {
+
+    public static QSAssembly newBuilder() {
+        return new QSAssembly();
+    }
+
 
     private final List<QSTaskService> taskServices = new ArrayList<QSTaskService>();
     private final CompositeConfiguration configuration = new CompositeConfiguration();
@@ -58,28 +63,31 @@ public class QSAssemblies {
     private QSWorkerIdService workerIdService;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public QSAssemblies configuration(Configuration configuration) {
+    private QSAssembly() {
+    }
+
+    public QSAssembly configuration(Configuration configuration) {
         this.configuration.addConfiguration(configuration);
         return this;
     }
 
-    public QSAssemblies taskServices(QSTaskService... taskServices) {
+    public QSAssembly taskServices(QSTaskService... taskServices) {
         this.taskServices.addAll(Arrays.asList(taskServices));
         return this;
     }
 
-    public QSAssemblies logService(QSLogService logService) {
+    public QSAssembly logService(QSLogService logService) {
         this.logService = logService;
         return this;
     }
 
-    public QSAssemblies workerIdService(QSWorkerIdService workerIdService) {
+    public QSAssembly workerIdService(QSWorkerIdService workerIdService) {
         this.workerIdService = workerIdService;
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public QSAssemblies workers(QSWorker<?>... workers) {
+    public QSAssembly workers(QSWorker<?>... workers) {
         // Accepts <?> for convenience. Casted away.
         for (QSWorker<?> worker : workers) {
             this.workers.put(worker.getHandlerName(), (QSWorker<Object>) worker);
@@ -87,7 +95,7 @@ public class QSAssemblies {
         return this;
     }
 
-    public QSAssemblies objectMapper(ObjectMapper objectMapper) {
+    public QSAssembly objectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         return this;
     }
@@ -100,6 +108,9 @@ public class QSAssemblies {
         Preconditions.checkNotNull(objectMapper, "An ObjectMapper must be available.");
     }
 
+    /**
+     * @return a configured QueueReader to process tasks. The QueueReader must be started via {@link QueueReader#run()}.
+     */
     public QueueReader build() {
         validate();
 

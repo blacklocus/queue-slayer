@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Passed to the {@link QueueItemHandler#process(Object)} method for processing in {@link QSAssemblies}.
+ * Passed to the {@link QueueItemHandler#process(Object)} method for processing in {@link QSAssembly}.
  */
 public class TaskKit<P> {
 

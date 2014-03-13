@@ -15,6 +15,7 @@
  */
 package com.blacklocus.qs.worker.model;
 
+import com.blacklocus.qs.worker.util.ObjectMappers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Objects;
 
@@ -39,6 +40,14 @@ public class QSTaskModel {
     }
 
     /**
+     * Constructor with fields important to queued jobs. Omits all tracking and status-oriented fields. Automatically
+     * JSON-serializes `params`.
+     */
+    public QSTaskModel(String batchId, String taskId, String worker, Integer remainingAttempts, Object params) {
+        this(batchId, taskId, worker, remainingAttempts, ObjectMappers.valueToTree(params));
+    }
+
+    /**
      * Constructor with fields important to queued jobs. Omits all tracking and status-oriented fields.
      */
     public QSTaskModel(String batchId, String taskId, String worker, Integer remainingAttempts, JsonNode params) {
@@ -58,6 +67,8 @@ public class QSTaskModel {
         this.elapsed = elapsed;
         this.finishedHappy = finishedHappy;
     }
+
+
 
     @Override
     public String toString() {

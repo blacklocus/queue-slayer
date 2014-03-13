@@ -42,7 +42,7 @@ public class TestApplication implements Runnable {
         executorService.submit(new TaskGenerator());
 
         // actual qs-worker API
-        new QSAssemblies()
+        QSAssembly.newBuilder()
                 .taskServices(new BlockingQueueQSTaskService(numbersMan))
                 .logService(new SystemOutQSLogService())
                 .workerIdService(new HostNameQSWorkerIdService())
@@ -94,7 +94,7 @@ class TestWorkerPrintIdentity extends AbstractQSWorker<Integer> {
 
     @Override
     public TaskKit<Integer> convert(TaskKitFactory<Integer> factory) throws Exception {
-        return factory.newTaskHandle(factory.params().asInt());
+        return factory.newTaskKit(factory.paramsJson().asInt());
     }
 
     @Override
@@ -116,7 +116,7 @@ class TestWorkerPrintSquare extends AbstractQSWorker<Integer> {
 
     @Override
     public TaskKit<Integer> convert(TaskKitFactory<Integer> factory) throws Exception {
-        return factory.newTaskHandle(factory.params().asInt());
+        return factory.newTaskKit(factory.paramsJson().asInt());
     }
 
     @Override
@@ -138,7 +138,7 @@ class TestWorkerPrintZero extends AbstractQSWorker<Integer> {
 
     @Override
     public TaskKit<Integer> convert(TaskKitFactory<Integer> factory) throws Exception {
-        return factory.newTaskHandle(factory.params().asInt());
+        return factory.newTaskKit(factory.paramsJson().asInt());
     }
 
     @Override
@@ -160,7 +160,7 @@ class TestWorkerUnmotivated extends AbstractQSWorker<Integer> {
 
     @Override
     public TaskKit<Integer> convert(TaskKitFactory<Integer> factory) throws Exception {
-        return factory.newTaskHandle(factory.params().asInt());
+        return factory.newTaskKit(factory.paramsJson().asInt());
     }
 
     @Override

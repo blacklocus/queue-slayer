@@ -14,7 +14,7 @@ public interface QSWorker<P> extends QueueItemHandler<TaskKitFactory<P>, TaskKit
     // Just to provide more specific documentation and parameter names.
 
     /**
-     * @param factory which should be used to generate the {@link TaskKit} from decoded {@link TaskKitFactory#params()}.
+     * @param factory which should be used to generate the {@link TaskKit} from decoded {@link TaskKitFactory#paramsJson()}.
      */
     @Override
     TaskKit<P> convert(TaskKitFactory<P> factory) throws Exception;
