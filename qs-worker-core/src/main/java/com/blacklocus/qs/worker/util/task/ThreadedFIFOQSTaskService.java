@@ -17,7 +17,7 @@ package com.blacklocus.qs.worker.util.task;
 
 import com.blacklocus.misc.ExceptingRunnable;
 import com.blacklocus.misc.InfiniteRunnable;
-import com.blacklocus.qs.worker.QSTaskService;
+import com.blacklocus.qs.worker.api.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 

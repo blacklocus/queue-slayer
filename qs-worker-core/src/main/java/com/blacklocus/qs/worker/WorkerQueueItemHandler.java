@@ -16,10 +16,12 @@
 package com.blacklocus.qs.worker;
 
 import com.blacklocus.qs.QueueItemHandler;
+import com.blacklocus.qs.worker.api.QSLogService;
+import com.blacklocus.qs.worker.api.QSTaskService;
+import com.blacklocus.qs.worker.api.QSWorker;
+import com.blacklocus.qs.worker.api.QSWorkerIdService;
 import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rholder.moar.concurrent.QueueingStrategy;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -28,12 +30,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle, Object> {
+class WorkerQueueItemHandler implements QueueItemHandler<QSTaskModel, TaskKit<Object>, Object> {
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkerQueueItemHandler.class);
 
@@ -41,61 +46,94 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
     private final QSTaskService taskService;
     private final QSLogService logService;
     private final QSWorkerIdService workerIdService;
-    private final Map<String, QSWorker<?>> workers;
-    private final ObjectMapper objectMapper;
+    private final Map<String, QSWorker<Object>> workers;
 
     WorkerQueueItemHandler(QueueingStrategy<QSTaskModel> queueingStrategy, QSTaskService taskService,
-                           QSLogService logService, QSWorkerIdService workerIdService, Map<String, QSWorker<?>> workers,
-                           ObjectMapper objectMapper) {
+                           QSLogService logService, QSWorkerIdService workerIdService,
+                           Map<String, QSWorker<Object>> workers) {
         this.queueingStrategy = queueingStrategy;
         this.taskService = taskService;
         this.logService = logService;
         this.workerIdService = workerIdService;
         this.workers = workers;
-        this.objectMapper = objectMapper;
     }
 
-    @Override
-    public TaskHandle convert(TaskHandle task) throws Exception {
-        LOG.info("Task started: {}", task.task);
-        logService.startedTask(task.logTask);
-        return task;
-    }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Object process(TaskHandle taskHandle) throws Exception {
-        QSTaskModel task = taskHandle.task;
-        QSWorker worker = workers.get(task.handler);
+    public void withFuture(QSTaskModel task, final Future<Pair<QSTaskModel, Object>> future) {
+        // I don't know if this is useful or not.
+
+        QSWorker<Object> worker = workers.get(task.worker);
         if (worker == null) {
-            throw new RuntimeException("No worker available for handler identifier: " + task.handler);
+            throw new RuntimeException("No worker available for worker identifier: " + task.worker);
         }
 
-        final Object params;
-        if (task.params instanceof JsonNode) {
-            params = objectMapper.readValue(((JsonNode) task.params).traverse(), worker.getTypeReference());
-        } else {
-            params = task.params;
-        }
-        return worker.undertake(params, new QSTaskLoggerDelegate(task));
+        final TaskKitFactory<Object> factory = new TaskKitFactory<Object>(task, worker, logService, workerIdService);
+        worker.withFuture(factory, new Future<Pair<TaskKitFactory<Object>, Object>>() {
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return future.cancel(mayInterruptIfRunning);
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return future.isCancelled();
+            }
+
+            @Override
+            public boolean isDone() {
+                return future.isDone();
+            }
+
+            @Override
+            public Pair<TaskKitFactory<Object>, Object> get() throws InterruptedException, ExecutionException {
+                Pair<QSTaskModel, Object> theFuture = future.get();
+                return Pair.of(factory, theFuture.getRight());
+            }
+
+            @Override
+            public Pair<TaskKitFactory<Object>, Object> get(long timeout, @SuppressWarnings("NullableProblems") TimeUnit unit)
+                    throws InterruptedException, ExecutionException, TimeoutException {
+                Pair<QSTaskModel, Object> theFuture = future.get(timeout, unit);
+                return Pair.of(factory, theFuture.getRight());
+            }
+        });
     }
 
     @Override
-    public void onSuccess(TaskHandle taskHandle, TaskHandle convertedTaskHandle, Object result) {
+    public TaskKit<Object> convert(QSTaskModel task) throws Exception {
+        task.started = System.currentTimeMillis();
+        task.workerId = workerIdService.getWorkerId();
+        LOG.info("Task started: {}", task);
+        logService.startedTask(task);
+
+        QSWorker<Object> handler = workers.get(task.worker);
+        if (handler == null) {
+            throw new RuntimeException("No worker available for handler identifier: " + task.worker);
+        }
+
+        // The worker only needs to specify how it wants to deserialize its params.
+        return handler.convert(new TaskKitFactory<Object>(task, handler, logService, workerIdService));
+    }
+
+    @Override
+    public Object process(TaskKit<Object> clump) throws Exception {
+        return clump.worker.process(clump);
+    }
+
+    @Override
+    public void onSuccess(QSTaskModel task, TaskKit handle, Object result) {
         queueingStrategy.onBeforeRemove();
 
-        QSTaskModel task = taskHandle.task;
         taskService.closeTask(task);
         LOG.info("Task succeeded: {}", task);
 
-        taskHandle.logTask.finishedHappy = true;
+        task.finishedHappy = true;
     }
 
     @Override
-    public void onError(TaskHandle taskHandle, TaskHandle convertedTaskHandle, Throwable throwable) {
+    public void onError(QSTaskModel task, TaskKit handle, Throwable throwable) {
         queueingStrategy.onBeforeRemove();
-
-        QSTaskModel task = taskHandle.task;
 
         ImmutableMap<String, ImmutableMap<String, String>> exceptionDetails = ImmutableMap.of("exception", ImmutableMap.of(
                 "class", throwable.getClass().getName(),
@@ -116,42 +154,21 @@ class WorkerQueueItemHandler implements QueueItemHandler<TaskHandle, TaskHandle,
             taskService.closeTask(task);
         }
 
-        taskHandle.logTask.finishedHappy = false;
+        task.finishedHappy = false;
     }
 
     @Override
-    public void onComplete(TaskHandle taskHandle, TaskHandle convertedTaskHandle, Object result) {
-        QSTaskModel task = taskHandle.task;
-        QSTaskModel logTask = taskHandle.logTask;
+    public void onComplete(QSTaskModel task, TaskKit clump, Object result) {
 
-        logTask.finished = System.currentTimeMillis();
-        logTask.elapsed = logTask.finished - logTask.started;
-        logService.completedTask(logTask);
+        task.finished = System.currentTimeMillis();
+        task.elapsed = task.finished - task.started;
+        logService.completedTask(task);
 
         queueingStrategy.onAfterRemove(task);
     }
 
-    @Override
-    public void withFuture(TaskHandle taskHandle, Future<Pair<TaskHandle, Object>> future) {
-    }
-
     private QSLogModel createLogTickModel(QSTaskModel task, Object contents) {
-        return new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), contents);
-    }
-
-    class QSTaskLoggerDelegate implements QSTaskLogger {
-        final QSTaskModel task;
-
-        QSTaskLoggerDelegate(QSTaskModel task) {
-            this.task = task;
-        }
-
-        @Override
-        public void log(Object contents) {
-            QSLogModel logTick = createLogTickModel(task, contents);
-            LOG.debug("{}", logTick); // prevents logTick.toString invocation unless debug-enabled
-            logService.log(logTick);
-        }
+        return new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.worker, System.currentTimeMillis(), contents);
     }
 
 }

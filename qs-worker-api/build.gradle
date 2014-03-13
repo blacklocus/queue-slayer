@@ -1,6 +1,0 @@
-dependencies {
-
-    compile deps.jackson_databind
-    compile deps.guava
-
-}

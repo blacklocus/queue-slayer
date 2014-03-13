@@ -19,10 +19,11 @@ import com.blacklocus.jres.BaseJresTest;
 import com.blacklocus.jres.request.index.JresRefresh;
 import com.blacklocus.jres.request.search.JresSearch;
 import com.blacklocus.jres.response.search.JresSearchReply;
-import com.blacklocus.qs.worker.QSLogService;
+import com.blacklocus.qs.worker.api.QSLogService;
 import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.model.QSWorkerModel;
+import com.blacklocus.qs.worker.util.ObjectMappers;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +38,8 @@ public class ElasticSearchQSLogServiceTest extends BaseJresTest {
         QSWorkerModel logWorker = new QSWorkerModel("test_worker", 0L);
 
         QSTaskModel logTask = new QSTaskModel("test_batch", "test_task", "test_handler", 1,
-                ImmutableMap.of("whatwhat?", "watch southpark"), "test_worker", 0L, null, null, false);
+                ObjectMappers.valueToTree(ImmutableMap.of("whatwhat?", "watch southpark")),
+                "test_worker", 0L, null, null, false);
         logService.startedTask(logTask);
 
         logWorker.tick = 123L;

@@ -16,6 +16,8 @@
 package com.blacklocus.qs.worker;
 
 import com.blacklocus.misc.ExceptingRunnable;
+import com.blacklocus.qs.worker.api.QSLogService;
+import com.blacklocus.qs.worker.api.QSWorkerIdService;
 import com.blacklocus.qs.worker.model.QSWorkerModel;
 
 class QSWorkerHeartbeater extends ExceptingRunnable {

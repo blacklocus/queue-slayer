@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blacklocus.qs.worker;
+package com.blacklocus.qs.worker.api;
 
 import com.blacklocus.qs.worker.model.QSTaskModel;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-class TaskHandle {
-    public final QSTaskModel task;
-    public final QSTaskModel logTask;
+public interface QSTaskService {
 
-    TaskHandle(QSTaskModel task, QSTaskModel logTask) {
-        this.task = task;
-        this.logTask = logTask;
-    }
+    void putTask(QSTaskModel task);
 
-    @Override
-    public String toString() {
-        return task.toString();
-    }
+    QSTaskModel getAvailableTask();
+
+    void resetTask(QSTaskModel task);
+
+    void closeTask(QSTaskModel task);
+
 }

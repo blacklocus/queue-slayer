@@ -1,12 +1,13 @@
 dependencies {
 
     compile project(':qs-core')
-    compile project(':qs-worker-api')
 
     compile deps.commons_configuration
     compile deps.commons_io
+    compile deps.guava
     compile deps.moar_concurrent
     compile deps.fauxflake_core
+    compile deps.jackson_databind
 
     testCompile deps.slf4j_simple
     testCompile deps.mockito_core

@@ -22,7 +22,7 @@ import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
-import com.blacklocus.qs.worker.QSTaskService;
+import com.blacklocus.qs.worker.api.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

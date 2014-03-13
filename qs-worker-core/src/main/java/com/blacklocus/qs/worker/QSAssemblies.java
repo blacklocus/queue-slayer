@@ -17,6 +17,10 @@ package com.blacklocus.qs.worker;
 
 import com.blacklocus.misc.Runnables;
 import com.blacklocus.qs.QueueReader;
+import com.blacklocus.qs.worker.api.QSLogService;
+import com.blacklocus.qs.worker.api.QSTaskService;
+import com.blacklocus.qs.worker.api.QSWorker;
+import com.blacklocus.qs.worker.api.QSWorkerIdService;
 import com.blacklocus.qs.worker.config.QSConfig;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.util.task.ThreadedFIFOQSTaskService;
@@ -26,13 +30,11 @@ import com.github.rholder.moar.concurrent.QueueingStrategy;
 import com.github.rholder.moar.concurrent.StrategicExecutors;
 import com.github.rholder.moar.concurrent.thread.CallerBlocksPolicy;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,43 +49,45 @@ import static com.github.rholder.moar.concurrent.StrategicExecutors.DEFAULT_SMOO
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public class QSWorkerBuilder {
+public class QSAssemblies {
 
     private final List<QSTaskService> taskServices = new ArrayList<QSTaskService>();
     private final CompositeConfiguration configuration = new CompositeConfiguration();
-    private final Map<String, QSWorker<?>> workers = new HashMap<String, QSWorker<?>>();
+    private final Map<String, QSWorker<Object>> workers = new HashMap<String, QSWorker<Object>>();
     private QSLogService logService;
     private QSWorkerIdService workerIdService;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public QSWorkerBuilder configuration(Configuration configuration) {
+    public QSAssemblies configuration(Configuration configuration) {
         this.configuration.addConfiguration(configuration);
         return this;
     }
 
-    public QSWorkerBuilder taskServices(QSTaskService... taskServices) {
+    public QSAssemblies taskServices(QSTaskService... taskServices) {
         this.taskServices.addAll(Arrays.asList(taskServices));
         return this;
     }
 
-    public QSWorkerBuilder logService(QSLogService logService) {
+    public QSAssemblies logService(QSLogService logService) {
         this.logService = logService;
         return this;
     }
 
-    public QSWorkerBuilder workerIdService(QSWorkerIdService workerIdService) {
+    public QSAssemblies workerIdService(QSWorkerIdService workerIdService) {
         this.workerIdService = workerIdService;
         return this;
     }
 
-    public QSWorkerBuilder workers(QSWorker<?>... workers) {
+    @SuppressWarnings("unchecked")
+    public QSAssemblies workers(QSWorker<?>... workers) {
+        // Accepts <?> for convenience. Casted away.
         for (QSWorker<?> worker : workers) {
-            this.workers.put(worker.getHandlerName(), worker);
+            this.workers.put(worker.getHandlerName(), (QSWorker<Object>) worker);
         }
         return this;
     }
 
-    public QSWorkerBuilder objectMapper(ObjectMapper objectMapper) {
+    public QSAssemblies objectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         return this;
     }
@@ -111,7 +115,6 @@ public class QSWorkerBuilder {
         );
         QSTaskService taskService = new ThreadedFIFOQSTaskService(queueingStrategy, taskServices);
         TaskServiceIterable taskIterable = new TaskServiceIterable(taskService);
-        Iterable<Collection<TaskHandle>> taskControlIterable = Iterables.transform(taskIterable, new TaskControlFunction(workerIdService));
 
         ExecutorService workerExecutorService = StrategicExecutors.newBalancingThreadPoolExecutor(
                 new ThreadPoolExecutor(
@@ -123,9 +126,9 @@ public class QSWorkerBuilder {
                 configuration.getFloat(QSConfig.PROP_WORKER_POOL_UTILIZATION), DEFAULT_SMOOTHING_WEIGHT, DEFAULT_BALANCE_AFTER
         );
 
-        return new QueueReader<TaskHandle, TaskHandle, Object>(
-                taskControlIterable,
-                new WorkerQueueItemHandler(queueingStrategy, taskService, logService, workerIdService, workers, objectMapper),
+        return new QueueReader<QSTaskModel, TaskKit<Object>, Object>(
+                taskIterable,
+                new WorkerQueueItemHandler(queueingStrategy, taskService, logService, workerIdService, workers),
                 workerExecutorService,
                 0
         );

@@ -19,9 +19,9 @@ import com.blacklocus.jres.BaseJresTest;
 import com.blacklocus.jres.request.index.JresRefresh;
 import com.blacklocus.qs.realm.FindTasks;
 import com.blacklocus.qs.realm.QSInfoService;
-import com.blacklocus.qs.worker.QSLogService;
+import com.blacklocus.qs.worker.api.QSLogService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.blacklocus.qs.worker.util.ObjectMappers;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,8 +33,6 @@ import java.util.List;
  */
 public class ElasticSearchQSInfoServiceTest extends BaseJresTest {
 
-    ObjectMapper objectMapper = new ObjectMapper();
-
     @Test
     public void testFindTasks() {
         String index = "ElasticSearchQSInfoServiceTest.testFindTasks".toLowerCase();
@@ -43,8 +41,8 @@ public class ElasticSearchQSInfoServiceTest extends BaseJresTest {
         QSTaskModel t1 = new QSTaskModel();
         t1.batchId = "bogus batch";
         t1.taskId = "bogus task1";
-        t1.handler = "bogus handler";
-        t1.params = ImmutableMap.of("bogus", "42");
+        t1.worker = "bogus handler";
+        t1.params = ObjectMappers.valueToTree(ImmutableMap.of("bogus", "42"));
         t1.workerId = "bogus worker";
         t1.started = System.currentTimeMillis();
         t1.finished = t1.started + 5L;
@@ -55,8 +53,8 @@ public class ElasticSearchQSInfoServiceTest extends BaseJresTest {
         QSTaskModel t2 = new QSTaskModel();
         t2.batchId = "bogus batch";
         t2.taskId = "bogus task1";
-        t2.handler = "bogus handler";
-        t2.params = ImmutableMap.of("bogus", "42");
+        t2.worker = "bogus handler";
+        t2.params = ObjectMappers.valueToTree(ImmutableMap.of("bogus", "42"));
         t2.workerId = "bogus worker";
         t2.started = System.currentTimeMillis();
         logService.startedTask(t2);

@@ -13,22 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blacklocus.qs.worker;
-
-import com.blacklocus.qs.worker.model.QSLogModel;
-import com.blacklocus.qs.worker.model.QSTaskModel;
-import com.blacklocus.qs.worker.model.QSWorkerModel;
+package com.blacklocus.qs.worker.api;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public interface QSLogService {
+public interface QSWorkerIdService {
 
-    void startedTask(QSTaskModel task);
-
-    void log(QSLogModel log);
-
-    void completedTask(QSTaskModel task);
-
-    void workerHeartbeat(QSWorkerModel worker);
+    String getWorkerId();
 }

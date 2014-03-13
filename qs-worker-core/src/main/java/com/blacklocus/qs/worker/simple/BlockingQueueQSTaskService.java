@@ -15,7 +15,7 @@
  */
 package com.blacklocus.qs.worker.simple;
 
-import com.blacklocus.qs.worker.QSTaskService;
+import com.blacklocus.qs.worker.api.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 
 import java.util.concurrent.BlockingQueue;

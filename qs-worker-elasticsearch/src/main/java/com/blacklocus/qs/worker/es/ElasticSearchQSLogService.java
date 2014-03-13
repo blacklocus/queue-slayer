@@ -17,7 +17,7 @@ package com.blacklocus.qs.worker.es;
 
 import com.blacklocus.jres.Jres;
 import com.blacklocus.jres.request.index.JresIndexDocument;
-import com.blacklocus.qs.worker.QSLogService;
+import com.blacklocus.qs.worker.api.QSLogService;
 import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.model.QSWorkerModel;

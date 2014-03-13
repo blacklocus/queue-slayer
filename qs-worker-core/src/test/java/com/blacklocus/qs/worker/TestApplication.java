@@ -19,7 +19,7 @@ import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.simple.BlockingQueueQSTaskService;
 import com.blacklocus.qs.worker.simple.HostNameQSWorkerIdService;
 import com.blacklocus.qs.worker.simple.SystemOutQSLogService;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.IntNode;
 import org.apache.commons.lang.math.RandomUtils;
 
 import java.util.concurrent.BlockingQueue;
@@ -42,11 +42,16 @@ public class TestApplication implements Runnable {
         executorService.submit(new TaskGenerator());
 
         // actual qs-worker API
-        new QSWorkerBuilder()
+        new QSAssemblies()
                 .taskServices(new BlockingQueueQSTaskService(numbersMan))
                 .logService(new SystemOutQSLogService())
                 .workerIdService(new HostNameQSWorkerIdService())
-                .workers(new TestWorkerPrintIdentity(), new TestWorkerPrintSquare(), new TestWorkerPrintZero(), new TestWorkerUnmotivated())
+                .workers(
+                        new TestWorkerPrintIdentity(),
+                        new TestWorkerPrintSquare(),
+                        new TestWorkerPrintZero(),
+                        new TestWorkerUnmotivated()
+                )
                 .build()
                 .run();
     }
@@ -59,7 +64,7 @@ public class TestApplication implements Runnable {
         @Override
         public Void call() throws Exception {
             while (!Thread.interrupted()) {
-                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), 1, 2));
+                numbersMan.put(new QSTaskModel(null, "" + System.currentTimeMillis(), randomHandler(), 1, new IntNode(2)));
                 Thread.sleep(100L);
             }
             return null;
@@ -78,7 +83,7 @@ public class TestApplication implements Runnable {
     }
 }
 
-class TestWorkerPrintIdentity implements QSWorker<Integer> {
+class TestWorkerPrintIdentity extends AbstractQSWorker<Integer> {
 
     public static final String HANDLER_NAME = "identity";
 
@@ -88,19 +93,19 @@ class TestWorkerPrintIdentity implements QSWorker<Integer> {
     }
 
     @Override
-    public TypeReference<Integer> getTypeReference() {
-        return new TypeReference<Integer>() {};
+    public TaskKit<Integer> convert(TaskKitFactory<Integer> factory) throws Exception {
+        return factory.newTaskHandle(factory.params().asInt());
     }
 
     @Override
-    public Object undertake(Integer value, QSTaskLogger taskLogger) throws Exception {
-        System.out.println(value);
+    public Object process(TaskKit<Integer> kit) throws Exception {
+        System.out.println(kit.params());
         Thread.sleep(1000L);
         return null;
     }
 }
 
-class TestWorkerPrintSquare implements QSWorker<Integer> {
+class TestWorkerPrintSquare extends AbstractQSWorker<Integer> {
 
     public static final String HANDLER_NAME = "square";
 
@@ -110,19 +115,19 @@ class TestWorkerPrintSquare implements QSWorker<Integer> {
     }
 
     @Override
-    public TypeReference<Integer> getTypeReference() {
-        return new TypeReference<Integer>() {};
+    public TaskKit<Integer> convert(TaskKitFactory<Integer> factory) throws Exception {
+        return factory.newTaskHandle(factory.params().asInt());
     }
 
     @Override
-    public Object undertake(Integer value, QSTaskLogger taskLogger) throws Exception {
-        System.out.println(Math.pow(value, 2));
+    public Object process(TaskKit<Integer> kit) throws Exception {
+        System.out.println(Math.pow(kit.params(), 2));
         Thread.sleep(1000L);
         return null;
     }
 }
 
-class TestWorkerPrintZero implements QSWorker<Integer> {
+class TestWorkerPrintZero extends AbstractQSWorker<Integer> {
 
     public static final String HANDLER_NAME = "zero";
 
@@ -132,19 +137,19 @@ class TestWorkerPrintZero implements QSWorker<Integer> {
     }
 
     @Override
-    public TypeReference<Integer> getTypeReference() {
-        return new TypeReference<Integer>() {};
+    public TaskKit<Integer> convert(TaskKitFactory<Integer> factory) throws Exception {
+        return factory.newTaskHandle(factory.params().asInt());
     }
 
     @Override
-    public Object undertake(Integer v, QSTaskLogger taskLogger) throws Exception {
+    public Object process(TaskKit<Integer> kit) throws Exception {
         System.out.println(0);
         Thread.sleep(1000L);
         return null;
     }
 }
 
-class TestWorkerUnmotivated implements QSWorker<Integer> {
+class TestWorkerUnmotivated extends AbstractQSWorker<Integer> {
 
     public static final String HANDLER_NAME = "unmotivated";
 
@@ -154,13 +159,13 @@ class TestWorkerUnmotivated implements QSWorker<Integer> {
     }
 
     @Override
-    public TypeReference<Integer> getTypeReference() {
-        return new TypeReference<Integer>() {};
+    public TaskKit<Integer> convert(TaskKitFactory<Integer> factory) throws Exception {
+        return factory.newTaskHandle(factory.params().asInt());
     }
 
     @Override
-    public Object undertake(Integer v, QSTaskLogger taskLogger) throws Exception {
-        taskLogger.log("This is dum.");
+    public Object process(TaskKit<Integer> kit) throws Exception {
+        kit.log("This is dum.");
         Thread.sleep(1000L);
         return null;
     }

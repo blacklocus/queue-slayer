@@ -16,7 +16,6 @@
 package com.blacklocus.qs.worker.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Objects;
 
 /**
@@ -26,10 +25,9 @@ public class QSTaskModel {
 
     public String batchId;
     public String taskId;
-    public String handler;
+    public String worker;
     public Integer remainingAttempts;
-    @JsonDeserialize(as = JsonNode.class)
-    public Object params;
+    public JsonNode params;
 
     public String workerId;
     public Long started;
@@ -43,15 +41,15 @@ public class QSTaskModel {
     /**
      * Constructor with fields important to queued jobs. Omits all tracking and status-oriented fields.
      */
-    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, Object params) {
-        this(batchId, taskId, handler, remainingAttempts, params, null, null, null, null, null);
+    public QSTaskModel(String batchId, String taskId, String worker, Integer remainingAttempts, JsonNode params) {
+        this(batchId, taskId, worker, remainingAttempts, params, null, null, null, null, null);
     }
 
-    public QSTaskModel(String batchId, String taskId, String handler, Integer remainingAttempts, Object params,
+    public QSTaskModel(String batchId, String taskId, String worker, Integer remainingAttempts, JsonNode params,
                        String workerId, Long started, Long finished, Long elapsed, Boolean finishedHappy) {
         this.batchId = batchId;
         this.taskId = taskId;
-        this.handler = handler;
+        this.worker = worker;
         this.remainingAttempts = remainingAttempts;
         this.params = params;
         this.workerId = workerId;
@@ -66,7 +64,7 @@ public class QSTaskModel {
         return Objects.toStringHelper(this)
                 .add("batchId", batchId)
                 .add("taskId", taskId)
-                .add("handler", handler)
+                .add("handler", worker)
                 .add("remainingAttempts", remainingAttempts)
                 .add("params", params)
                 .add("workerId", workerId)

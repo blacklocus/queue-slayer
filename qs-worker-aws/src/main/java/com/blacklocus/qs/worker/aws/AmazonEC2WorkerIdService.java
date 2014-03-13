@@ -16,7 +16,7 @@
 package com.blacklocus.qs.worker.aws;
 
 import com.amazonaws.util.EC2MetadataUtils;
-import com.blacklocus.qs.worker.QSWorkerIdService;
+import com.blacklocus.qs.worker.api.QSWorkerIdService;
 import com.blacklocus.qs.worker.simple.HostNameQSWorkerIdService;
 import org.apache.commons.lang3.StringUtils;
 

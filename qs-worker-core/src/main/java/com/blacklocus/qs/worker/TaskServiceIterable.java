@@ -16,6 +16,7 @@
 package com.blacklocus.qs.worker;
 
 import com.blacklocus.qs.QueueItemProvider;
+import com.blacklocus.qs.worker.api.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 
 import java.util.Collection;

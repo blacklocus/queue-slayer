@@ -15,7 +15,7 @@
  */
 package com.blacklocus.qs.worker.simple;
 
-import com.blacklocus.qs.worker.QSWorkerIdService;
+import com.blacklocus.qs.worker.api.QSWorkerIdService;
 import com.github.rholder.fauxflake.util.PidUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

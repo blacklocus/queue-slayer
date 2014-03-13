@@ -15,7 +15,7 @@
  */
 package com.blacklocus.qs.worker.util.log;
 
-import com.blacklocus.qs.worker.QSLogService;
+import com.blacklocus.qs.worker.api.QSLogService;
 import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.google.common.base.Predicate;

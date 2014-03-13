@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blacklocus.qs.worker;
+package com.blacklocus.qs.worker.api;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.blacklocus.qs.worker.model.QSLogModel;
+import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.model.QSWorkerModel;
 
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public interface QSWorker<T> {
+public interface QSLogService {
 
-    String getHandlerName();
+    void startedTask(QSTaskModel task);
 
-    TypeReference<T> getTypeReference();
+    void log(QSLogModel log);
 
-    Object undertake(T params, QSTaskLogger taskLogger) throws Exception;
+    void completedTask(QSTaskModel task);
 
+    void workerHeartbeat(QSWorkerModel worker);
 }

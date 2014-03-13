@@ -15,9 +15,8 @@
  */
 package com.blacklocus.qs.worker.util.log;
 
-import com.blacklocus.qs.worker.QSLogService;
-import com.blacklocus.qs.worker.QSTaskLogger;
-import com.blacklocus.qs.worker.QSWorker;
+import com.blacklocus.qs.worker.TaskKit;
+import com.blacklocus.qs.worker.api.QSLogService;
 import com.blacklocus.qs.worker.model.QSLogModel;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.model.QSWorkerModel;
@@ -36,8 +35,7 @@ import com.google.common.base.Predicate;
  *                                             sample in all logging messages produced by this task's processing.
  *                                             <code>false</code> to filter out.
  *     <li>{@link #log(QSLogModel)} - any number of logs produced by a worker through the `taskLogger` provided through
- *                                    {@link QSWorker#undertake(Object, QSTaskLogger)} will be sampled in or filtered
- *                                    out as determined by the first step.
+ *                                    {@link TaskKit} will be sampled in or filtered out as determined by the first step.
  *     <li>{@link #completedTask(QSTaskModel)} -
  * </ul>
  *

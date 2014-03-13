@@ -16,6 +16,7 @@
 package com.blacklocus.qs.worker.es;
 
 import com.blacklocus.qs.worker.model.QSTaskModel;
+import com.blacklocus.qs.worker.util.ObjectMappers;
 
 /**
  * Because ElasticSearch dynamically generates type mappings, and parameters between different types of tasks will
@@ -44,7 +45,7 @@ public class QSTaskElasticSearchModel {
     }
 
     public QSTaskElasticSearchModel(QSTaskModel normalModel) {
-        this(normalModel.batchId, normalModel.taskId, normalModel.handler, normalModel.remainingAttempts, normalModel.params,
+        this(normalModel.batchId, normalModel.taskId, normalModel.worker, normalModel.remainingAttempts, normalModel.params,
                 normalModel.workerId, normalModel.started, normalModel.finished, normalModel.elapsed, normalModel.finishedHappy);
     }
 
@@ -64,7 +65,8 @@ public class QSTaskElasticSearchModel {
     }
 
     public QSTaskModel toNormalModel() {
-        return new QSTaskModel(batchId, taskId, handler, remainingAttempts, params.get(handler),
+        return new QSTaskModel(batchId, taskId, handler, remainingAttempts,
+                ObjectMappers.valueToTree(params.get(handler)),
                 workerId, started, finished, elapsed, finishedHappy);
     }
 

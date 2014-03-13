@@ -19,16 +19,15 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.blacklocus.qs.worker.QSTaskService;
+import com.blacklocus.qs.worker.api.QSTaskService;
 import com.blacklocus.qs.worker.model.QSTaskModel;
 import com.blacklocus.qs.worker.util.IdSupplier;
+import com.blacklocus.qs.worker.util.ObjectMappers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Iterator;
 
 public class AmazonS3TaskService implements QSTaskService {
-
-    public static final String PARAM_OBJECT = "value";
 
     public static final long RESTART_DELAY_MS = 5 * 60 * 1000;
 
@@ -69,7 +68,7 @@ public class AmazonS3TaskService implements QSTaskService {
         }
         S3ObjectSummary obj = iterator.next();
         assert obj != null;
-        return new QSTaskModel(listingBatchId, IdSupplier.newId(), taskHandlerIdentifier, 5, obj);
+        return new QSTaskModel(listingBatchId, IdSupplier.newId(), taskHandlerIdentifier, 5, ObjectMappers.valueToTree(obj));
     }
 
     @Override
