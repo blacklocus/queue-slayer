@@ -25,22 +25,22 @@ import java.util.concurrent.Future;
 public abstract class AbstractQueueItemHandler<Q, T, R> implements QueueItemHandler<Q, T, R> {
 
     @Override
-    public void onSuccess(Q factory, T kit, R result) {
+    public void onSuccess(Q queueItem, T convertedQueueItem, R result) {
         // do nothing
     }
 
     @Override
-    public void onError(Q factory, T kit, Throwable throwable) {
+    public void onError(Q queueItem, T convertedQueueItem, Throwable throwable) {
         // do nothing
     }
 
     @Override
-    public void onComplete(Q factory, T kit, R result) {
+    public void onComplete(Q queueItem, T convertedQueueItem, R result) {
         // do nothing
     }
 
     @Override
-    public void withFuture(Q factory, Future<Pair<Q, R>> future) {
+    public void withFuture(Q queueItem, Future<Pair<Q, R>> future) {
         // do nothing
     }
 }
