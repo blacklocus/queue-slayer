@@ -33,7 +33,7 @@ ext {
             fauxflake_core: 'com.github.rholder.fauxflake:fauxflake-core:1.0.0',
             guava: 'com.google.guava:guava:15.0',
             jackson_databind: 'com.fasterxml.jackson.core:jackson-databind:2.3.0',
-            jres: 'com.blacklocus:jres:0.1.4',
+            jres: 'com.blacklocus:jres:0.1.8',
             jres_test: 'com.blacklocus:jres-test:0.1.4',
             junit: 'junit:junit:4.11',
             moar_concurrent: 'com.github.rholder:moar-concurrent:1.0.2',
