@@ -63,9 +63,9 @@ class WorkerQueueItemHandler implements QueueItemHandler<QSTaskModel, TaskKit<Ob
     public void withFuture(QSTaskModel task, final Future<Pair<QSTaskModel, Object>> future) {
         // I don't know if this is useful or not.
 
-        QSWorker<Object> worker = workers.get(task.worker);
+        QSWorker<Object> worker = workers.get(task.handler);
         if (worker == null) {
-            throw new RuntimeException("No worker available for worker identifier: " + task.worker);
+            throw new RuntimeException("No worker available for worker identifier: " + task.handler);
         }
 
         final TaskKitFactory<Object> factory = new TaskKitFactory<Object>(task, worker, logService, workerIdService);
@@ -107,9 +107,9 @@ class WorkerQueueItemHandler implements QueueItemHandler<QSTaskModel, TaskKit<Ob
         LOG.info("Task started: {}", task);
         logService.startedTask(task);
 
-        QSWorker<Object> handler = workers.get(task.worker);
+        QSWorker<Object> handler = workers.get(task.handler);
         if (handler == null) {
-            throw new RuntimeException("No worker available for handler identifier: " + task.worker);
+            throw new RuntimeException("No worker available for handler identifier: " + task.handler);
         }
 
         // The worker only needs to specify how it wants to deserialize its params.
@@ -168,7 +168,7 @@ class WorkerQueueItemHandler implements QueueItemHandler<QSTaskModel, TaskKit<Ob
     }
 
     private QSLogModel createLogTickModel(QSTaskModel task, Object contents) {
-        return new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.worker, System.currentTimeMillis(), contents);
+        return new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), contents);
     }
 
 }

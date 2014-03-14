@@ -37,7 +37,7 @@ public class TaskKit<P> {
     }
 
     public void log(Object content) {
-        QSLogModel logTick = new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.worker, System.currentTimeMillis(), content);
+        QSLogModel logTick = new QSLogModel(task.taskId, workerIdService.getWorkerId(), task.handler, System.currentTimeMillis(), content);
         LOG.debug("{}", logTick); // prevents logTick.toString invocation unless debug-enabled
         logService.log(logTick);
     }

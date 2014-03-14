@@ -41,7 +41,7 @@ public class ElasticSearchQSInfoServiceTest extends BaseJresTest {
         QSTaskModel t1 = new QSTaskModel();
         t1.batchId = "bogus batch";
         t1.taskId = "bogus task1";
-        t1.worker = "bogus handler";
+        t1.handler = "bogus handler";
         t1.params = ObjectMappers.valueToTree(ImmutableMap.of("bogus", "42"));
         t1.workerId = "bogus worker";
         t1.started = System.currentTimeMillis();
@@ -53,7 +53,7 @@ public class ElasticSearchQSInfoServiceTest extends BaseJresTest {
         QSTaskModel t2 = new QSTaskModel();
         t2.batchId = "bogus batch";
         t2.taskId = "bogus task1";
-        t2.worker = "bogus handler";
+        t2.handler = "bogus handler";
         t2.params = ObjectMappers.valueToTree(ImmutableMap.of("bogus", "42"));
         t2.workerId = "bogus worker";
         t2.started = System.currentTimeMillis();

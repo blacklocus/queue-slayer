@@ -45,7 +45,7 @@ public class QSTaskElasticSearchModel {
     }
 
     public QSTaskElasticSearchModel(QSTaskModel normalModel) {
-        this(normalModel.batchId, normalModel.taskId, normalModel.worker, normalModel.remainingAttempts, normalModel.params,
+        this(normalModel.batchId, normalModel.taskId, normalModel.handler, normalModel.remainingAttempts, normalModel.params,
                 normalModel.workerId, normalModel.started, normalModel.finished, normalModel.elapsed, normalModel.finishedHappy);
     }
 
