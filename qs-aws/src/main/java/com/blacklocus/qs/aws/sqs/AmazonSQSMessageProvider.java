@@ -51,6 +51,15 @@ public class AmazonSQSMessageProvider implements MessageProvider {
         this.queueUrl = queueUrl;
     }
 
+    /**
+     * Returns the queue url for this provider.
+     *
+     * @return the queue url for this provider
+     */
+    public String getQueueUrl() {
+        return queueUrl;
+    }
+
     @Override
     public List<Message> next() {
         try {
