@@ -14,10 +14,10 @@ A micro pattern for thread-parallelized processing of messages off of a queue.
 
     dependencies {
 
-        compile 'com.blacklocus.queue-slayer:qs-core:0.1.3'
+        compile 'com.blacklocus.queue-slayer:qs-core:0.3.0'
 
         // for AWS SQS message providers
-        compile 'com.blacklocus.queue-slayer:qs-aws:0.1.3'
+        compile 'com.blacklocus.queue-slayer:qs-aws:0.3.0'
 
     }
 
@@ -39,13 +39,13 @@ Task processing and tracking.
 
     dependencies {
 
-        compile 'com.blacklocus.queue-slayer:qs-worker-core:0.1.3'
+        compile 'com.blacklocus.queue-slayer:qs-worker-core:0.3.0'
 
         // for AWS implementations (SQS-based tasks)
-        compile 'com.blacklocus.queue-slayer:qs-worker-aws:0.1.3'
+        compile 'com.blacklocus.queue-slayer:qs-worker-aws:0.3.0'
 
         // for ES implementations (ES-based logging)
-        compile 'com.blacklocus.queue-slayer:qs-worker-elasticsearch:0.1.3'
+        compile 'com.blacklocus.queue-slayer:qs-worker-elasticsearch:0.3.0'
 
     }
 
@@ -54,25 +54,6 @@ Task processing and tracking.
 Here's an entirely self-contained example that mocks a task service which generates tasks to calculate the lengths of
 randomized strings. Tasks are passed through a BlockingQueue (since we're generating them within the machine), and
 logged to standard output.
-
-    package com.blacklocus.magnus;
-
-    import com.blacklocus.qs.worker.QSTaskLogger;
-    import com.blacklocus.qs.worker.QSWorker;
-    import com.blacklocus.qs.worker.QSWorkerBuilder;
-    import com.blacklocus.qs.worker.model.QSTaskModel;
-    import com.blacklocus.qs.worker.simple.BlockingQueueQSTaskService;
-    import com.blacklocus.qs.worker.simple.HostNameQSWorkerIdService;
-    import com.blacklocus.qs.worker.simple.SystemOutQSLogService;
-    import com.blacklocus.utility.ExceptingRunnable;
-    import com.fasterxml.jackson.core.type.TypeReference;
-    import com.google.common.collect.ImmutableMap;
-    import org.apache.commons.lang.math.RandomUtils;
-    import org.apache.commons.lang3.RandomStringUtils;
-
-    import java.util.Map;
-    import java.util.concurrent.BlockingQueue;
-    import java.util.concurrent.SynchronousQueue;
 
     public class RandomStdoutTasksExample {
 
@@ -84,16 +65,16 @@ logged to standard output.
             new Thread(new ExceptingRunnable() {
                 @Override
                 protected void go() throws Exception {
-                    while(true) {
-                        workQueue.put(new QSTaskModel(null, "" + MyIdUtils.nextId(), "stdout", 1, ImmutableMap.of(
-                                "message", RandomStringUtils.randomAscii(RandomUtils.nextInt(32))
+                    while (true) {
+                        workQueue.put(new QSTaskModel(null, "" + RandomUtils.nextInt(), "stdout", 1,
+                                new Params(RandomStringUtils.randomAscii(RandomUtils.nextInt(32))
                         )));
                     }
                 }
             }).start();
 
             // All this worker does is log an extra message describing the length of the "message" param.
-            QSWorker<Map<String, String>> worker = new QSWorker<Map<String, String>>() {
+            QSWorker<Params> worker = new AbstractQSWorker<Params>() {
                 @Override
                 public String getHandlerName() {
                     // This identifies the type of task this worker can handle. In our task generator above, the
@@ -102,20 +83,20 @@ logged to standard output.
                 }
 
                 @Override
-                public TypeReference<Map<String, String>> getTypeReference() {
-                    return new TypeReference<Map<String, String>>() {};
+                public TaskKit<Params> convert(TaskKitFactory<Params> factory) throws Exception {
+                    return factory.newTaskKit(Params.class);
                 }
 
                 @Override
-                public String undertake(Map<String, String> params, QSTaskLogger taskLogger) throws Exception {
-                    String msg = params.get("message");
-                    taskLogger.log(msg + " is " + msg.length() + " characters long");
+                public Object process(TaskKit<Params> kit) throws Exception {
+                    String msg = kit.params().message;
+                    kit.log(msg + " is " + msg.length() + " characters long");
                     return null;
                 }
             };
 
 
-            new QSWorkerBuilder()
+            QSAssembly.newBuilder()
 
                     // The source of work.
                     .taskServices(new BlockingQueueQSTaskService(workQueue))
@@ -131,6 +112,21 @@ logged to standard output.
 
                     // Run it in the current thread.
                     .build().run();
+        }
+
+        static class Params {
+            String message;
+
+            Params() {
+            }
+
+            Params(String message) {
+                this.message = message;
+            }
+
+            public String getMessage() {
+                return message;
+            }
         }
 
     }
