@@ -4,4 +4,6 @@ dependencies {
 
     compile deps.aws_java_sdk
 
+    testCompile deps.slf4j_simple
+    testCompile deps.mockito_core
 }
