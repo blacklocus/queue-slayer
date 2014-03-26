@@ -23,12 +23,16 @@ import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.blacklocus.qs.Message;
 import com.blacklocus.qs.MessageProvider;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +52,19 @@ public class AmazonSQSPrioritizedMessageProvider implements MessageProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(AmazonSQSPrioritizedMessageProvider.class);
 
+    public static final Comparator<String> DEFAULT_QUEUE_COMPARATOR = new Comparator<String>() {
+        @Override
+        public int compare(String s1, String s2) {
+            return s1.compareTo(s2);
+        }
+    };
+
     private AmazonSQS sqs;
     private String queuePrefix;
     private long updateIntervalNs;
+
+    private Predicate<String> include;
+    private Comparator<String> queueComparator;
 
     private List<AmazonSQSMessageProvider> messageProviders;
     private long lastNanoTime;
@@ -65,12 +79,40 @@ public class AmazonSQSPrioritizedMessageProvider implements MessageProvider {
     public AmazonSQSPrioritizedMessageProvider(AmazonSQS sqs, String queuePrefix, long updateIntervalMs) {
         this.sqs = sqs;
         this.queuePrefix = queuePrefix;
-        this.updateIntervalNs = TimeUnit.NANOSECONDS.convert(updateIntervalMs, TimeUnit.MILLISECONDS);
+        this.updateIntervalNs = TimeUnit.MILLISECONDS.toNanos(updateIntervalMs);
+
+        this.include = Predicates.alwaysTrue();
+        this.queueComparator = DEFAULT_QUEUE_COMPARATOR;
 
         this.messageProviders = Lists.newArrayList();
 
         // ensure first next() causes an updateAvailableQueues()
         this.lastNanoTime = currentNanoTime() - updateIntervalNs - 1;
+    }
+
+    /**
+     * Queue names that return true for this predicate are included in the list
+     * of available queues to be prioritized. It defaults to including all
+     * available queues pulled for a prefix.
+     *
+     * @param include the predicate to satisfy
+     * @return this instance for chaining
+     */
+    public AmazonSQSPrioritizedMessageProvider withInclude(Predicate<String> include) {
+        this.include = include;
+        return this;
+    }
+
+    /**
+     * This comparator controls the sort order of the returned queues. It
+     * defaults to generic String.compareTo().
+     *
+     * @param queueComparator the custom sorting comparator
+     * @return this instance for chaining
+     */
+    public AmazonSQSPrioritizedMessageProvider withQueueComparator(Comparator<String> queueComparator) {
+        this.queueComparator = queueComparator;
+        return this;
     }
 
     /**
@@ -160,8 +202,8 @@ public class AmazonSQSPrioritizedMessageProvider implements MessageProvider {
     private void updateAvailableQueues() {
         try {
             ListQueuesResult result = sqs.listQueues(new ListQueuesRequest(queuePrefix));
-            List<String> availableQueues = result.getQueueUrls();
-            Collections.sort(availableQueues);
+            List<String> availableQueues = Lists.newArrayList(Iterables.filter(result.getQueueUrls(), include));
+            Collections.sort(availableQueues, queueComparator);
             messageProviders.clear();
             for (String queueUrl : availableQueues) {
                 messageProviders.add(new AmazonSQSMessageProvider(sqs, queueUrl));

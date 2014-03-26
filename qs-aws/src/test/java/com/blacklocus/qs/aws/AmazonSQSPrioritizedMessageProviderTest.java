@@ -22,12 +22,14 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.blacklocus.qs.Message;
 import com.blacklocus.qs.aws.sqs.AmazonSQSPrioritizedMessageProvider;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -119,7 +121,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
                 });
 
         // verify the order of next objects by counting the number of messages we return
-        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES));
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", TimeUnit.MINUTES.toMillis(30));
 
         // for queues with messages, 1 receive returns messages, 1 receive returns none and removes the provider
         assertMessages(provider.next(), 3, "A");
@@ -162,7 +164,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
                 });
 
         // check for new queues every 30 minutes, should be way longer than this test runs so we can simulate elapsed time
-        final long intervalNs = TimeUnit.NANOSECONDS.convert(30, TimeUnit.MINUTES);
+        final long intervalNs = TimeUnit.MINUTES.toNanos(30);
 
         // simulate the passage of time
         final Iterator<Long> time = Lists.newArrayList(
@@ -175,7 +177,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
                 3 * intervalNs + 2                 // no update
         ).iterator();
 
-        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", TimeUnit.MILLISECONDS.convert(intervalNs, TimeUnit.NANOSECONDS)) {
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", TimeUnit.NANOSECONDS.toMillis(intervalNs)) {
             @Override
             public long currentNanoTime() {
                 return time.next();
@@ -207,6 +209,143 @@ public class AmazonSQSPrioritizedMessageProviderTest {
 
         // no update
         provider.next();
+        verify(amazonSQS, times(3)).listQueues(any(ListQueuesRequest.class));
+    }
+
+    @Test
+    public void filteredQueues() {
+        AmazonSQS amazonSQS = mock(AmazonSQS.class);
+
+        // return queues
+        when(amazonSQS.listQueues(any(ListQueuesRequest.class)))
+                .thenReturn(
+                        new ListQueuesResult().withQueueUrls("test-A", "test-C", "test-B", "test-D"),
+                        new ListQueuesResult().withQueueUrls("test-C", "test-B", "test-D"),
+                        new ListQueuesResult().withQueueUrls("test-C", "test-D"));
+
+        // always return messages from these queues
+        when(amazonSQS.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenAnswer(new Answer<Object>() {
+                    @Override
+                    public Object answer(InvocationOnMock invocation) throws Throwable {
+                        ReceiveMessageRequest receiveMessageRequest = (ReceiveMessageRequest) invocation.getArguments()[0];
+                        return new ReceiveMessageResult().withMessages(newMessage(receiveMessageRequest.getQueueUrl()), newMessage(receiveMessageRequest.getQueueUrl()));
+                    }
+                });
+
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 0)
+                .withInclude(new Predicate<String>() {
+                    @Override
+                    public boolean apply(String input) {
+                        return input.equals("test-B");
+                    }
+                });
+
+        // no update on constructor
+        verify(amazonSQS, times(0)).listQueues(any(ListQueuesRequest.class));
+
+        // update on every next, only test-B messages
+        assertMessages(provider.next(), 2, "test-B");
+        verify(amazonSQS, times(1)).listQueues(any(ListQueuesRequest.class));
+
+        // update on every next, only test-B messages
+        assertMessages(provider.next(), 2, "test-B");
+        verify(amazonSQS, times(2)).listQueues(any(ListQueuesRequest.class));
+
+        // update on every next, should be no messages when there is no B
+        assertMessages(provider.next(), 0, "nothing");
+        verify(amazonSQS, times(3)).listQueues(any(ListQueuesRequest.class));
+    }
+
+    @Test
+    public void sortedQueuesReverse() {
+        AmazonSQS amazonSQS = mock(AmazonSQS.class);
+
+        // return queues
+        when(amazonSQS.listQueues(any(ListQueuesRequest.class)))
+                .thenReturn(
+                        new ListQueuesResult().withQueueUrls("test-A", "test-C", "test-B", "test-D"),
+                        new ListQueuesResult().withQueueUrls("test-A", "test-C", "test-B"),
+                        new ListQueuesResult().withQueueUrls("test-C", "test-e", "test-D", "test-F", "test-A"));
+
+        // always return messages from these queues
+        when(amazonSQS.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenAnswer(new Answer<Object>() {
+                    @Override
+                    public Object answer(InvocationOnMock invocation) throws Throwable {
+                        ReceiveMessageRequest receiveMessageRequest = (ReceiveMessageRequest) invocation.getArguments()[0];
+                        return new ReceiveMessageResult().withMessages(newMessage(receiveMessageRequest.getQueueUrl()), newMessage(receiveMessageRequest.getQueueUrl()));
+                    }
+                });
+
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 0)
+                .withQueueComparator(new Comparator<String>() {
+                    @Override
+                    public int compare(String s1, String s2) {
+                        // reverse sorting
+                        return s2.compareTo(s1);
+                    }
+                });
+
+        // no update on constructor
+        verify(amazonSQS, times(0)).listQueues(any(ListQueuesRequest.class));
+
+        // update on every next, only test-D messages
+        assertMessages(provider.next(), 2, "test-D");
+        verify(amazonSQS, times(1)).listQueues(any(ListQueuesRequest.class));
+
+        // update on every next, only test-C messages
+        assertMessages(provider.next(), 2, "test-C");
+        verify(amazonSQS, times(2)).listQueues(any(ListQueuesRequest.class));
+
+        // update on every next, only test-e messages
+        assertMessages(provider.next(), 2, "test-e");
+        verify(amazonSQS, times(3)).listQueues(any(ListQueuesRequest.class));
+    }
+
+    @Test
+    public void sortedQueuesReverseIgnoreCase() {
+        AmazonSQS amazonSQS = mock(AmazonSQS.class);
+
+        // return queues
+        when(amazonSQS.listQueues(any(ListQueuesRequest.class)))
+                .thenReturn(
+                        new ListQueuesResult().withQueueUrls("test-A", "test-C", "test-B", "test-D"),
+                        new ListQueuesResult().withQueueUrls("test-A", "test-C", "test-B"),
+                        new ListQueuesResult().withQueueUrls("test-C", "test-e", "test-D", "test-F", "test-A"));
+
+        // always return messages from these queues
+        when(amazonSQS.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenAnswer(new Answer<Object>() {
+                    @Override
+                    public Object answer(InvocationOnMock invocation) throws Throwable {
+                        ReceiveMessageRequest receiveMessageRequest = (ReceiveMessageRequest) invocation.getArguments()[0];
+                        return new ReceiveMessageResult().withMessages(newMessage(receiveMessageRequest.getQueueUrl()), newMessage(receiveMessageRequest.getQueueUrl()));
+                    }
+                });
+
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 0)
+                .withQueueComparator(new Comparator<String>() {
+                    @Override
+                    public int compare(String s1, String s2) {
+                        // reverse sorting, ignore case
+                        return s2.compareToIgnoreCase(s1);
+                    }
+                });
+
+        // no update on constructor
+        verify(amazonSQS, times(0)).listQueues(any(ListQueuesRequest.class));
+
+        // update on every next, only test-D messages
+        assertMessages(provider.next(), 2, "test-D");
+        verify(amazonSQS, times(1)).listQueues(any(ListQueuesRequest.class));
+
+        // update on every next, only test-C messages
+        assertMessages(provider.next(), 2, "test-C");
+        verify(amazonSQS, times(2)).listQueues(any(ListQueuesRequest.class));
+
+        // update on every next, only test-F messages
+        assertMessages(provider.next(), 2, "test-F");
         verify(amazonSQS, times(3)).listQueues(any(ListQueuesRequest.class));
     }
 
