@@ -91,7 +91,7 @@ public class AmazonSQSPrioritizedMessageProvider implements MessageProvider {
     }
 
     /**
-     * Queue names that return true for this predicate are included in the list
+     * Queue <b>URLs</b> that return true for this predicate are included in the list
      * of available queues to be prioritized. It defaults to including all
      * available queues pulled for a prefix.
      *
