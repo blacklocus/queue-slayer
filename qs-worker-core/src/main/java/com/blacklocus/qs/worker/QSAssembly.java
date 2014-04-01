@@ -58,7 +58,7 @@ public class QSAssembly {
 
     private final List<QSTaskService> taskServices = new ArrayList<QSTaskService>();
     private final CompositeConfiguration configuration = new CompositeConfiguration();
-    private final Map<String, QSWorker<Object>> workers = new HashMap<String, QSWorker<Object>>();
+    private final Map<String, QSWorker> workers = new HashMap<String, QSWorker>();
     private QSLogService logService;
     private QSWorkerIdService workerIdService;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -86,11 +86,9 @@ public class QSAssembly {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
-    public QSAssembly workers(QSWorker<?>... workers) {
-        // Accepts <?> for convenience. Casted away.
-        for (QSWorker<?> worker : workers) {
-            this.workers.put(worker.getHandlerName(), (QSWorker<Object>) worker);
+    public QSAssembly workers(QSWorker... workers) {
+        for (QSWorker worker : workers) {
+            this.workers.put(worker.getHandlerName(), worker);
         }
         return this;
     }
@@ -137,7 +135,7 @@ public class QSAssembly {
                 configuration.getFloat(QSConfig.PROP_WORKER_POOL_UTILIZATION), DEFAULT_SMOOTHING_WEIGHT, DEFAULT_BALANCE_AFTER
         );
 
-        return new QueueReader<QSTaskModel, TaskKit<Object>, Object>(
+        return new QueueReader<QSTaskModel, TaskKit, Object>(
                 taskIterable,
                 new WorkerQueueItemHandler(queueingStrategy, taskService, logService, workerIdService, workers),
                 workerExecutorService,

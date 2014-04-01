@@ -49,7 +49,7 @@ public class TaskKitFactory<P> {
      * @param params parameters decoded from {@link #paramsJson()}
      */
     public TaskKit<P> newTaskKit(P params) {
-        return new TaskKit<P>(task, params, worker, logService, workerIdService);
+        return new TaskKit<P>(task, params, this, worker, logService, workerIdService);
     }
 
     /**

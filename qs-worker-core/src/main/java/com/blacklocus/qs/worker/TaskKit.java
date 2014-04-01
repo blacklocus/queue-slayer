@@ -35,13 +35,15 @@ public class TaskKit<P> {
     private final QSTaskModel task;
     private final P params;
 
+    final TaskKitFactory<P> factory;
     final QSWorker<P> worker;
     private final QSLogService logService;
     private final QSWorkerIdService workerIdService;
 
-    TaskKit(QSTaskModel task, P params, QSWorker<P> worker, QSLogService logService, QSWorkerIdService workerIdService) {
+    TaskKit(QSTaskModel task, P params, TaskKitFactory<P> factory, QSWorker<P> worker, QSLogService logService, QSWorkerIdService workerIdService) {
         this.task = task;
         this.params = params;
+        this.factory = factory;
         this.worker = worker;
         this.logService = logService;
         this.workerIdService = workerIdService;
