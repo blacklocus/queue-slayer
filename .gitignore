@@ -1,3 +1,4 @@
+.*
 *.ipr
 *.iml
 *.iws
@@ -5,5 +6,6 @@
 /.gradle/
 build/
 /out/
+bin/
 *.swp
 
