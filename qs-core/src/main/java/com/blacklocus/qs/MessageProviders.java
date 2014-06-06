@@ -113,6 +113,15 @@ public class MessageProviders {
                     log.error("An error occurred during delete()", t);
                 }
             }
+
+            @Override
+            public void setVisibilityTimeout(Message message, Integer visibilityTimeoutSeconds) {
+                try {
+                    messageProvider.setVisibilityTimeout(message, visibilityTimeoutSeconds);
+                } catch (Throwable t) {
+                    log.error("An error occurred during delete()", t);
+                }
+            }
         };
     }
 
@@ -297,5 +306,10 @@ class DelegatingMessageProvider implements MessageProvider {
     @Override
     public void delete(Message message) {
         messageProvider.delete(message);
+    }
+
+    @Override
+    public void setVisibilityTimeout(Message message, Integer visibilityTimeoutSeconds) {
+        messageProvider.setVisibilityTimeout(message, visibilityTimeoutSeconds);
     }
 }

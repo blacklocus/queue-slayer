@@ -16,6 +16,7 @@
 package com.blacklocus.qs.aws.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.blacklocus.qs.Message;
@@ -105,5 +106,10 @@ public class AmazonSQSMessageProvider implements MessageProvider {
     @Override
     public void delete(Message message) {
         sqs.deleteMessage(new DeleteMessageRequest(queueUrl, message.getReceipt()));
+    }
+
+    @Override
+    public void setVisibilityTimeout(Message message, Integer visibilityTimeoutSeconds) {
+        sqs.changeMessageVisibility(new ChangeMessageVisibilityRequest(queueUrl, message.getReceipt(), visibilityTimeoutSeconds));
     }
 }
