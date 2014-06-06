@@ -27,4 +27,12 @@ public interface MessageProvider extends QueueItemProvider<Message> {
      * @param message the message to delete
      */
     public void delete(Message message);
+
+    /**
+     * Sets the specified message's visibility timeout.
+     *
+     * @param message the messaage whose visibility timeout to set
+     * @param visibilityTimeoutSeconds the message's new visibility timeout in seconds
+     */
+    public void setVisibilityTimeout(Message message, Integer visibilityTimeoutSeconds);
 }

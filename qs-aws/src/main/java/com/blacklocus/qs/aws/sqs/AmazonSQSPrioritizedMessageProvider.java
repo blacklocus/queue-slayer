@@ -17,6 +17,7 @@ package com.blacklocus.qs.aws.sqs;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.ListQueuesRequest;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
@@ -194,6 +195,16 @@ public class AmazonSQSPrioritizedMessageProvider implements MessageProvider {
         if (message instanceof OriginatingMessage) {
             OriginatingMessage originatingMessage = (OriginatingMessage) message;
             sqs.deleteMessage(new DeleteMessageRequest(originatingMessage.getOriginatingQueueUrl(), message.getReceipt()));
+        } else {
+            throw new RuntimeException("Unsupported message type: " + message.getBody());
+        }
+    }
+
+    @Override
+    public void setVisibilityTimeout(Message message, Integer visibilityTimeoutSeconds) {
+        if (message instanceof OriginatingMessage) {
+            OriginatingMessage originatingMessage = (OriginatingMessage) message;
+            sqs.changeMessageVisibility(new ChangeMessageVisibilityRequest(originatingMessage.getOriginatingQueueUrl(), message.getReceipt(), visibilityTimeoutSeconds));
         } else {
             throw new RuntimeException("Unsupported message type: " + message.getBody());
         }
