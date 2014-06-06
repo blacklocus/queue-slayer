@@ -66,7 +66,7 @@ public class AmazonSQSMessageProvider implements MessageProvider {
         try {
             // receive messages from SQS
             ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl)
-                    .withAttributeNames("SentTimestamp")
+                    .withAttributeNames("SentTimestamp", "ApproximateReceiveCount")
                     .withMaxNumberOfMessages(10);
             List<com.amazonaws.services.sqs.model.Message> sqsMessages = sqs.receiveMessage(receiveMessageRequest).getMessages();
             return Lists.transform(sqsMessages, new Function<com.amazonaws.services.sqs.model.Message, Message>() {
