@@ -119,7 +119,7 @@ public class MessageProviders {
                 try {
                     messageProvider.setVisibilityTimeout(message, visibilityTimeoutSeconds);
                 } catch (Throwable t) {
-                    log.error("An error occurred during delete()", t);
+                    log.error("An error occurred during setVisibilityTimeout()", t);
                 }
             }
         };
