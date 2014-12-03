@@ -25,7 +25,7 @@ def defaultBlank(closure) {
 ext {
     deps = [
 
-            aws_java_sdk: 'com.amazonaws:aws-java-sdk:1.6.8',
+            aws_java_sdk: 'com.amazonaws:aws-java-sdk:1.6.12',
             commons_configuration: 'commons-configuration:commons-configuration:1.10',
             commons_io: 'commons-io:commons-io:2.4',
             commons_lang3: 'org.apache.commons:commons-lang3:3.1',
@@ -35,7 +35,10 @@ ext {
             jackson_databind: 'com.fasterxml.jackson.core:jackson-databind:2.3.0',
             jres: 'com.blacklocus:jres:0.1.8',
             jres_test: 'com.blacklocus:jres-test:0.1.4',
+            json_path: 'com.jayway.jsonpath:json-path:0.9.1',
+            json_simple : 'com.googlecode.json-simple:json-simple:1.1',
             junit: 'junit:junit:4.11',
+            kinesis_client_library: 'com.amazonaws:amazon-kinesis-client:1.1.1',
             moar_concurrent: 'com.github.rholder:moar-concurrent:1.0.2',
             mockito_core: 'org.mockito:mockito-core:1.9.5',
             slf4j_api: 'org.slf4j:slf4j-api:1.7.5',
