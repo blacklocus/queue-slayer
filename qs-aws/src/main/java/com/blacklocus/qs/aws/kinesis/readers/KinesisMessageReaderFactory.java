@@ -13,7 +13,7 @@ public class KinesisMessageReaderFactory implements MessageReaderFactory<String,
     @SuppressWarnings("unchecked")
     public MessageReader<String, String> createReader() {
         return new KinesisMessageReader(
-                AWSConfig.AWS_CREDETIALS_PROVIDER,
+                AWSConfig.AWS_CREDENTIALS_PROVIDER,
                 KinesisMessageReaderConfig.APP_NAME,
                 KinesisMessageReaderConfig.INPUT_STREAM_NAME,
                 KinesisMessageReaderConfig.INITIAL_POSITION,

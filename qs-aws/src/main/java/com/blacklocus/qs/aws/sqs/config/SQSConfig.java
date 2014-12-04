@@ -8,5 +8,5 @@ import com.blacklocus.qs.aws.config.AWSConfig;
  * Amazon SQS configuration.
  */
 public class SQSConfig {
-    public static final AmazonSQS SQS_CLIENT = new AmazonSQSClient(AWSConfig.AWS_CREDETIALS_PROVIDER);
+    public static final AmazonSQS SQS_CLIENT = new AmazonSQSClient(AWSConfig.AWS_CREDENTIALS_PROVIDER);
 }

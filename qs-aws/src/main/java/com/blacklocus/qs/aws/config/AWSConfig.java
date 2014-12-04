@@ -11,7 +11,7 @@ public class AWSConfig {
 
     private static final String DEFAULT_CREDENTIALS_PROVIDER_CLASS_NAME = "com.amazonaws.auth.DefaultAWSCredentialsProviderChain";
 
-    public static final AWSCredentialsProvider AWS_CREDETIALS_PROVIDER =
+    public static final AWSCredentialsProvider AWS_CREDENTIALS_PROVIDER =
         (AWSCredentialsProvider) SystemPropertyConfig.createObjectFromKey(
             PROP_CREDENTIALS_PROVIDER_CLASS_NAME,
             DEFAULT_CREDENTIALS_PROVIDER_CLASS_NAME);
