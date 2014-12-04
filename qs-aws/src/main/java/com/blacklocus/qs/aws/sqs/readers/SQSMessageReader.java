@@ -1,8 +1,8 @@
 package com.blacklocus.qs.aws.sqs.readers;
 
-import com.blacklocus.qs.Writer;
+import com.blacklocus.qs.MessageReader;
+import com.blacklocus.qs.MessageWriter;
 import com.blacklocus.qs.MessageProvider;
-import com.blacklocus.qs.Reader;
 import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +17,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * To start a QueueReader call its {@link #run()} or {@link #start()} method.
  */
-public class QueueReader implements Reader<String, String> {
-    private static final Logger LOG = LoggerFactory.getLogger(QueueReader.class);
+public class SQSMessageReader implements MessageReader<String, String> {
+    private static final Logger LOG = LoggerFactory.getLogger(SQSMessageReader.class);
 
     private Function<Iterable<String>, Iterable<String>> transform;
-    private Writer<String> writer;
+    private MessageWriter<String> writer;
 
     private final MessageProvider messageProvider;
     private final boolean deleteOnFailure;
@@ -36,7 +36,7 @@ public class QueueReader implements Reader<String, String> {
      * @param deleteOnFailure whether or not to delete messages that the consumer fails to consume
      * @param visibilityTimeoutSeconds how long to wait before a failed message should be eligible to be processed again
      */
-    public QueueReader(
+    public SQSMessageReader(
             MessageProvider messageProvider,
             boolean deleteOnFailure,
             int visibilityTimeoutSeconds) {
@@ -49,7 +49,7 @@ public class QueueReader implements Reader<String, String> {
         this.transform = transform;
     }
 
-    public void setWriter(Writer<String> writer) {
+    public void setWriter(MessageWriter<String> writer) {
         this.writer = writer;
     }
 

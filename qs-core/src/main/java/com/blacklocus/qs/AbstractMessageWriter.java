@@ -1,9 +1,9 @@
 package com.blacklocus.qs;
 
 /**
- * An abstract implementation of a {@link com.blacklocus.qs.Writer} that writes one record at a time.
+ * An abstract implementation of a {@link MessageWriter} that writes one record at a time.
  */
-public abstract class AbstractWriter<T> implements Writer<T> {
+public abstract class AbstractMessageWriter<T> implements MessageWriter<T> {
     public Boolean apply(Iterable<T> records) {
         boolean result = true;
 

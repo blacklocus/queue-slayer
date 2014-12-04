@@ -3,8 +3,7 @@ package com.blacklocus.qs.aws.sqs.writers;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequest;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
-import com.amazonaws.services.sqs.model.SendMessageRequest;
-import com.blacklocus.qs.Writer;
+import com.blacklocus.qs.MessageWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link com.blacklocus.qs.Writer} that writes string messages to an SQS queue.
+ * A {@link com.blacklocus.qs.MessageWriter} that writes string messages to an SQS queue.
  */
-public class QueueWriter implements Writer<String> {
-    private static final Logger LOG = LoggerFactory.getLogger(QueueWriter.class);
+public class SQSMessageWriter implements MessageWriter<String> {
+    private static final Logger LOG = LoggerFactory.getLogger(SQSMessageWriter.class);
 
     private final AmazonSQSAsync sqs;
     private final String queueUrl;
@@ -26,7 +25,7 @@ public class QueueWriter implements Writer<String> {
      * @param sqs the AmazonSQS client.
      * @param queueUrl the SQS queue's URL
      */
-    public QueueWriter(
+    public SQSMessageWriter(
             AmazonSQSAsync sqs,
             String queueUrl) {
         this.sqs = sqs;

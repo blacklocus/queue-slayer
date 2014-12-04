@@ -2,15 +2,15 @@ package com.blacklocus.qs.aws.sns.writers;
 
 import com.amazonaws.services.sns.AmazonSNSAsync;
 import com.amazonaws.services.sns.model.PublishRequest;
-import com.blacklocus.qs.AbstractWriter;
+import com.blacklocus.qs.AbstractMessageWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Consumer that writes messages to an SNS topic.
+ * A {@link com.blacklocus.qs.MessageWriter} that writes messages to an SNS topic.
  */
-public class TopicWriter extends AbstractWriter<String> {
-    private static final Logger LOG = LoggerFactory.getLogger(TopicWriter.class);
+public class SNSMessageWriter extends AbstractMessageWriter<String> {
+    private static final Logger LOG = LoggerFactory.getLogger(SNSMessageWriter.class);
 
     private final AmazonSNSAsync sns;
     private final String topicArn;
@@ -21,7 +21,7 @@ public class TopicWriter extends AbstractWriter<String> {
      * @param sns the AmazonSNSAsync client.
      * @param topicArn the SNS topic's ARN
      */
-    public TopicWriter(AmazonSNSAsync sns, String topicArn) {
+    public SNSMessageWriter(AmazonSNSAsync sns, String topicArn) {
         this.sns = sns;
         this.topicArn = topicArn;
     }

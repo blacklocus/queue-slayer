@@ -1,20 +1,20 @@
-package com.blacklocus.qs.aws.sqs.writers;
+package com.blacklocus.qs.aws.sns.writers;
 
-import com.blacklocus.qs.Writer;
+import com.blacklocus.qs.MessageWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
 /**
- * An example application that periodically writes sample records onto an SQS queue
- * using a {@link QueueWriter}.
+ * An example application that periodically writes sample records onto an SNS topic
+ * using a {@link SNSMessageWriter}.
  */
-public class ExampleQueueWriterApp {
-    private static final Logger LOG = LoggerFactory.getLogger(ExampleQueueWriterApp.class);
+public class ExampleSNSMessageWriterApp {
+    private static final Logger LOG = LoggerFactory.getLogger(ExampleSNSMessageWriterApp.class);
 
     public static void main(String[] args) {
-        Writer<String> writer = new QueueWriterFactory().createWriter();
+        MessageWriter<String> writer = new SNSMessageWriterFactory().createWriter();
 
         int count = 0;
 
@@ -22,7 +22,7 @@ public class ExampleQueueWriterApp {
             // create a message
             String msg = "msg " + count;
 
-            System.out.println(String.format("Writing '%s' to '%s'...", msg, QueueWriterConfig.OUTPUT_QUEUE_NAME));
+            System.out.println(String.format("Writing '%s' to '%s'...", msg, SNSMessageWriterConfig.OUTPUT_TOPIC_ARN));
 
             // write the message
             writer.apply(Arrays.asList(msg));

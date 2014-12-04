@@ -1,19 +1,19 @@
 package com.blacklocus.qs.aws.kinesis.writers;
 
-import com.blacklocus.qs.Writer;
+import com.blacklocus.qs.MessageWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
 /**
- * An example application that periodically writes sample records to a Kinesis stream using a {@link StreamWriter}.
+ * An example application that periodically writes sample records to a Kinesis stream using a {@link KinesisMessageWriter}.
  */
-public class ExampleStreamWriterApp {
-    private static final Logger LOG = LoggerFactory.getLogger(ExampleStreamWriterApp.class);
+public class ExampleKinesisMessageWriterApp {
+    private static final Logger LOG = LoggerFactory.getLogger(ExampleKinesisMessageWriterApp.class);
 
     public static void main(String[] args) {
-        Writer<String> writer = new StreamWriterFactory().createWriter();
+        MessageWriter<String> writer = new KinesisMessageWriterFactory().createWriter();
 
         int count = 0;
 
@@ -21,7 +21,7 @@ public class ExampleStreamWriterApp {
             // create a message
             String msg = "msg " + count;
 
-            System.out.println(String.format("Writing '%s' to '%s'...", msg, StreamWriterConfig.OUTPUT_STREAM_NAME));
+            System.out.println(String.format("Writing '%s' to '%s'...", msg, KinesisMessageWriterConfig.OUTPUT_STREAM_NAME));
 
             // write the message
             writer.apply(Arrays.asList(msg));

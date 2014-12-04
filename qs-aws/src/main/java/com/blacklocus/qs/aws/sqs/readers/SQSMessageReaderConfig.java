@@ -6,9 +6,9 @@ import com.blacklocus.qs.aws.sqs.AmazonSQSMessageProvider;
 import com.blacklocus.qs.aws.sqs.config.SQSConfig;
 
 /**
- * Configuration for an SQS {@link com.blacklocus.qs.aws.sqs.readers.QueueReader}.
+ * Configuration for a {@link SQSMessageReader}.
  */
-public class QueueReaderConfig {
+public class SQSMessageReaderConfig {
     private static final String PROP_INPUT_QUEUE_URL = "bl.input.queue.url";
     private static final String PROP_DELETE_MESSAGE_ON_FAILURE = "bl.delete.message.on.failure";
     private static final String PROP_MESSAGE_VISIBILITY_TIMEOUT_SECONDS = "bl.message.visibility.timeout.seconds";

@@ -6,7 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 /**
  * A function that extracts the message from an SNS notification.
  */
-public class    NotificationToMessage extends AbstractTransform<String, String> {
+public class NotificationToMessage extends AbstractTransform<String, String> {
     private static final JsonPath path = JsonPath.compile("$.Message");
 
     public String transform(String notification) {

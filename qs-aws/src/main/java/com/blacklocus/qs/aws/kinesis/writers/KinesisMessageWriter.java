@@ -2,7 +2,7 @@ package com.blacklocus.qs.aws.kinesis.writers;
 
 import com.amazonaws.services.kinesis.AmazonKinesisAsync;
 import com.amazonaws.services.kinesis.model.PutRecordRequest;
-import com.blacklocus.qs.AbstractWriter;
+import com.blacklocus.qs.AbstractMessageWriter;
 import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,16 +10,16 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 
 /**
- * A {@link com.blacklocus.qs.Writer} that writes messages to a Kinesis stream.
- * See {@link ExampleStreamWriterApp} for an example application that uses a
+ * A {@link com.blacklocus.qs.MessageWriter} that writes messages to a Kinesis stream.
+ * See {@link ExampleKinesisMessageWriterApp} for an example application that uses a
  * KinesisStreamWriter.
  *
  * This class uses a function to convert a message to a Kinesis partition key (a string).
  * That function can typically be a {@link MessageToRandomPartitionKey} that generates
  * random Kinesis partition keys independent of the actual message.
  */
-public class StreamWriter extends AbstractWriter<String> {
-    private static final Logger LOG = LoggerFactory.getLogger(StreamWriter.class);
+public class KinesisMessageWriter extends AbstractMessageWriter<String> {
+    private static final Logger LOG = LoggerFactory.getLogger(KinesisMessageWriter.class);
 
     private final AmazonKinesisAsync kinesis;
     private final String streamName;
@@ -31,7 +31,7 @@ public class StreamWriter extends AbstractWriter<String> {
      * @param kinesis the AmazonKinesis client.
      * @param streamName the name of the target Kinesis stream
      */
-    public StreamWriter(
+    public KinesisMessageWriter(
             AmazonKinesisAsync kinesis,
             String streamName) {
         this(kinesis, streamName, new MessageToRandomPartitionKey<String>());
@@ -44,7 +44,7 @@ public class StreamWriter extends AbstractWriter<String> {
      * @param streamName the name of the target Kinesis stream
      * @param messageToPartitionKey a function that takes a message and returns a partition key
      */
-    public StreamWriter(
+    public KinesisMessageWriter(
             AmazonKinesisAsync kinesis,
             String streamName,
             Function<String, String> messageToPartitionKey) {

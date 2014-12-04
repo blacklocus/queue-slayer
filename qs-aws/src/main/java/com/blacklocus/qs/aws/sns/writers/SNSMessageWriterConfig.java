@@ -5,7 +5,7 @@ import com.blacklocus.config.SystemPropertyConfig;
 /**
  * author: steve
  */
-public class TopicWriterConfig {
+public class SNSMessageWriterConfig {
     private static final String PROP_OUTPUT_TOPIC_ARN = "bl.output.topic.arn";
 
     private static final String DEFAULT_OUTPUT_TOPIC_ARN = "arn:aws:sns:us-east-1:493847008801:TestTopic1";

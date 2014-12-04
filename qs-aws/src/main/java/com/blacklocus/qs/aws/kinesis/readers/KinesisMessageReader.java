@@ -9,9 +9,9 @@ import com.amazonaws.services.kinesis.clientlibrary.lib.worker.KinesisClientLibC
 import com.amazonaws.services.kinesis.clientlibrary.lib.worker.Worker;
 import com.amazonaws.services.kinesis.clientlibrary.types.ShutdownReason;
 import com.amazonaws.services.kinesis.model.Record;
-import com.blacklocus.qs.Writer;
+import com.blacklocus.qs.MessageReader;
+import com.blacklocus.qs.MessageWriter;
 import com.blacklocus.qs.aws.kinesis.CheckpointStrategy;
-import com.blacklocus.qs.Reader;
 import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * A {@link StreamReader} feeds records from a Kinesis stream to one or more consumers.
+ * A {@link KinesisMessageReader} feeds records from a Kinesis stream to one or more consumers.
  * The class creates the consumers on demand using the specified WriterFactory.
  *
  * Once created, a reader must be started by calling the {@link #start()} method (or optionally the {@link #run()} method).
@@ -31,20 +31,20 @@ import java.util.UUID;
  * such as reading from other Kinesis streams, you should start the reader on its own dedicated thread.
  * To stop a reader, call its {@link #stop()} method. Readers that have been stopped can not be restarted.
  */
-public class StreamReader implements Reader<String, String> {
-    private static final Logger LOG = LoggerFactory.getLogger(StreamReader.class);
+public class KinesisMessageReader implements MessageReader<String, String> {
+    private static final Logger LOG = LoggerFactory.getLogger(KinesisMessageReader.class);
 
     /**
      * The {@link com.google.common.base.Function} used to transform records before passing them to this reader's
-     * {@link com.blacklocus.qs.Writer}.
+     * {@link com.blacklocus.qs.MessageWriter}.
      */
     private Function<Iterable<String>, Iterable<String>> transform;
 
     /**
-     * The {@link com.blacklocus.qs.Writer} used by this {@link com.blacklocus.qs.Reader} to write transformed
+     * The {@link com.blacklocus.qs.MessageWriter} used by this {@link com.blacklocus.qs.MessageReader} to write transformed
      * records.
      */
-    private Writer<String> writer;
+    private MessageWriter<String> writer;
 
     /**
      * The Kinesis Worker. It creates and destroys RecordProcessors as needed to service the
@@ -116,7 +116,7 @@ public class StreamReader implements Reader<String, String> {
     }
 
     /**
-     * Creates a Kinesis {@link StreamReader} to process a specified Kinesis stream.
+     * Creates a Kinesis {@link KinesisMessageReader} to process a specified Kinesis stream.
      *
      * @param credentialsProvider an {@link com.amazonaws.auth.AWSCredentialsProvider} containing the
      *                            credentials required to access the specified Kinesis stream.
@@ -125,7 +125,7 @@ public class StreamReader implements Reader<String, String> {
      * @param initialPosition where to start reading from the stream
      * @param checkpointStrategy the strategy used to perform Kinesis check-points
      */
-    public StreamReader(
+    public KinesisMessageReader(
             AWSCredentialsProvider credentialsProvider,
             String appName,
             String streamName,
@@ -156,7 +156,7 @@ public class StreamReader implements Reader<String, String> {
         this.transform = transform;
     }
 
-    public void setWriter(Writer<String> writer) {
+    public void setWriter(MessageWriter<String> writer) {
         this.writer = writer;
     }
 

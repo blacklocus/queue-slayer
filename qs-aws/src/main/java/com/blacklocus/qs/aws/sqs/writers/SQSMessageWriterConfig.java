@@ -4,9 +4,9 @@ import com.blacklocus.config.SystemPropertyConfig;
 import com.blacklocus.qs.aws.sqs.config.SQSAsyncConfig;
 
 /**
- * Config info for an SQS {@link com.blacklocus.qs.aws.sqs.writers.QueueWriter}.
+ * Config info for a {@link SQSMessageWriter}.
  */
-public class QueueWriterConfig {
+public class SQSMessageWriterConfig {
     private static final String PROP_OUTPUT_QUEUE_NAME = "bl.output.queue.name";
 
     public static final String OUTPUT_QUEUE_NAME =

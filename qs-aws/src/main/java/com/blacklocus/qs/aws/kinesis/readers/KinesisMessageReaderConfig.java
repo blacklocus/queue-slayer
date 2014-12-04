@@ -5,9 +5,9 @@ import com.blacklocus.config.SystemPropertyConfig;
 import com.blacklocus.qs.aws.kinesis.CheckpointStrategy;
 
 /**
- * Configuration for a Kinesis {@link com.blacklocus.qs.aws.kinesis.readers.StreamReader}.
+ * Configuration for a Kinesis {@link KinesisMessageReader}.
  */
-public class StreamReaderConfig {
+public class KinesisMessageReaderConfig {
     private static final String PROP_APP_NAME = "bl.app.name";
     private static final String PROP_INPUT_STREAM_NAME = "bl.input.stream.name";
     private static final String PROP_INITIAL_POSITION = "bl.initial.position";
