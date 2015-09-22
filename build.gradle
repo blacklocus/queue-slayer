@@ -25,21 +25,15 @@ def defaultBlank(closure) {
 ext {
     deps = [
 
-            aws_java_sdk: 'com.amazonaws:aws-java-sdk:1.6.8',
-            commons_configuration: 'commons-configuration:commons-configuration:1.10',
-            commons_io: 'commons-io:commons-io:2.4',
-            commons_lang3: 'org.apache.commons:commons-lang3:3.1',
-            dropwizard_core: 'com.yammer.dropwizard:dropwizard-core:0.6.2',
-            fauxflake_core: 'com.github.rholder.fauxflake:fauxflake-core:1.0.0',
-            guava: 'com.google.guava:guava:15.0',
-            jackson_databind: 'com.fasterxml.jackson.core:jackson-databind:2.3.0',
-            jres: 'com.blacklocus:jres:0.1.8',
-            jres_test: 'com.blacklocus:jres-test:0.1.4',
-            junit: 'junit:junit:4.11',
-            moar_concurrent: 'com.github.rholder:moar-concurrent:1.0.2',
-            mockito_core: 'org.mockito:mockito-core:1.9.5',
-            slf4j_api: 'org.slf4j:slf4j-api:1.7.5',
-            slf4j_simple: 'org.slf4j:slf4j-simple:1.7.5',
+            aws_java_sdk_s3: 'com.amazonaws:aws-java-sdk-s3:1.10.20',
+            aws_java_sdk_sqs: 'com.amazonaws:aws-java-sdk-sqs:1.10.20',
+            commons_lang3: 'org.apache.commons:commons-lang3:3.4',
+            guava: 'com.google.guava:guava:18.0',
+            jackson_databind: 'com.fasterxml.jackson.core:jackson-databind:2.6.2',
+            junit: 'junit:junit:4.12',
+            mockito_core: 'org.mockito:mockito-core:1.10.19',
+            slf4j_api: 'org.slf4j:slf4j-api:1.7.12',
+            slf4j_simple: 'org.slf4j:slf4j-simple:1.7.12',
 
     ]
 }
@@ -53,7 +47,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.5.0'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
     }
 }
 allprojects {
@@ -70,7 +64,7 @@ subprojects {
     // Identifiers
 
     group = 'com.blacklocus.queue-slayer'
-    version = '0.3.5-SNAPSHOT'
+    version = '0.4.0-SNAPSHOT'
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,6 +99,10 @@ subprojects {
 
     jar {
         manifest = defaultManifest()
+    }
+
+    javadoc {
+        failOnError false
     }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -192,11 +190,11 @@ subprojects {
 // Misc
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.10'
+    gradleVersion = '2.4'
 }
 
 idea {
     project {
-        languageLevel = '1.6'
+        languageLevel = '1.7'
     }
 }

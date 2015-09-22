@@ -1,9 +1,0 @@
-dependencies {
-
-    compile project(':qs-worker-core')
-    compile deps.dropwizard_core
-
-    testCompile project(':qs-worker-elasticsearch')
-    testCompile deps.jres_test
-
-}
