@@ -19,11 +19,35 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * More generalized version of {@link MessageProvider}
+ * The superest class inside of the com.blacklocus.qs namespace which can provide items to a {@link QueueReader}.
+ * Note that the QueueReader actually accepts any <code>Iterable&lt;Collection&lt;Q&gt;&gt; provider</code>, so this is
+ * useful more as a marker interface.
  *
  * @author Jason Dunkelberger (dirkraft)
  */
 public interface QueueItemProvider<Q> extends Iterator<Collection<Q>>, Iterable<Collection<Q>> {
+
+    /**
+     * @return true if the reading {@link QueueReader} should continue processing messages from this provider.
+     */
+    @Override
+    boolean hasNext();
+
+    /**
+     * @return the next batch of messages, or an empty collection if none were available. Should never return
+     * <code>null</code>. The reading {@link QueueReader} may sleep after receiving an empty batch depending on its
+     * configuration.
+     */
+    @Override
+    Collection<Q> next();
+
+    /**
+     * A means to delete the message because it is done or should not be processed again. If the provider does not
+     * care or has no such notion, should not throw an exception. An exception may be thrown if the provider
+     * does recognize remove semantics, but somehow failed in executing that intention.
+     */
+    @Override
+    void remove();
 
     /**
      * Generally returns <code>this</code>. QueueItemProviders are not generally reusable/resettable since the

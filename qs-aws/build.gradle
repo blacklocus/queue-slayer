@@ -2,7 +2,8 @@ dependencies {
 
     compile project(':qs-core')
 
-    compile deps.aws_java_sdk
+    compile deps.aws_java_sdk_s3
+    compile deps.aws_java_sdk_sqs
 
     testCompile deps.slf4j_simple
     testCompile deps.mockito_core

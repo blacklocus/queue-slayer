@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -82,7 +81,7 @@ public class ExternalQueueItemProvider<Q> implements QueueItemProvider<Q>, Close
                 throw new RuntimeException(e);
             }
         }
-        return q == null ? Collections.<Q>emptyList() : Arrays.asList(q); // meh, no batching
+        return q == null ? Collections.<Q>emptyList() : Collections.singletonList(q); // meh, no batching
     }
 
     @Override

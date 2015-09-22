@@ -1,5 +1,0 @@
-dependencies {
-    compile project(':qs-worker-core')
-
-    compile deps.aws_java_sdk
-}
