@@ -30,6 +30,7 @@ ext {
             commons_lang3: 'org.apache.commons:commons-lang3:3.4',
             guava: 'com.google.guava:guava:18.0',
             jackson_databind: 'com.fasterxml.jackson.core:jackson-databind:2.6.2',
+            jsr305: 'com.google.code.findbugs:jsr305:3.0.0',
             junit: 'junit:junit:4.12',
             mockito_core: 'org.mockito:mockito-core:1.10.19',
             slf4j_api: 'org.slf4j:slf4j-api:1.7.12',
@@ -87,6 +88,7 @@ subprojects {
 
     dependencies {
         testCompile deps.junit
+        testCompile deps.slf4j_simple
     }
 
     configurations {
