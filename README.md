@@ -25,12 +25,6 @@ dependencies {
 other dependency syntax on [mvnrepository.com](http://mvnrepository.com/artifact/com.blacklocus.queue-slayer/qs-worker-core/0.4.0)
 
 
-### Java API ###
-
-```java
-
-```
-
 
 ## License ##
 
