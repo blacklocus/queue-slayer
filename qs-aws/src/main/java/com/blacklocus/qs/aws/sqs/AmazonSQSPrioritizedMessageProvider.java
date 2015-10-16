@@ -62,6 +62,7 @@ public class AmazonSQSPrioritizedMessageProvider implements MessageProvider {
 
     private AmazonSQS sqs;
     private String queuePrefix;
+    private int waitTimeSeconds;
     private long updateIntervalNs;
 
     private Predicate<String> include;
@@ -75,11 +76,14 @@ public class AmazonSQSPrioritizedMessageProvider implements MessageProvider {
      *
      * @param sqs              AmazonSQS instance to use for communicating with AWS
      * @param queuePrefix      the prefix to use when searching for queues
+     * @param waitTimeSeconds  number of seconds to pass through to
+     *                         {@link AmazonSQSMessageProvider#AmazonSQSMessageProvider(AmazonSQS, String, int)}
      * @param updateIntervalMs time in milliseconds between when new queues should be checked
      */
-    public AmazonSQSPrioritizedMessageProvider(AmazonSQS sqs, String queuePrefix, long updateIntervalMs) {
+    public AmazonSQSPrioritizedMessageProvider(AmazonSQS sqs, String queuePrefix, int waitTimeSeconds, long updateIntervalMs) {
         this.sqs = sqs;
         this.queuePrefix = queuePrefix;
+        this.waitTimeSeconds = waitTimeSeconds;
         this.updateIntervalNs = TimeUnit.MILLISECONDS.toNanos(updateIntervalMs);
 
         this.include = Predicates.alwaysTrue();
@@ -217,7 +221,7 @@ public class AmazonSQSPrioritizedMessageProvider implements MessageProvider {
             Collections.sort(availableQueues, queueComparator);
             messageProviders.clear();
             for (String queueUrl : availableQueues) {
-                messageProviders.add(new AmazonSQSMessageProvider(sqs, queueUrl));
+                messageProviders.add(new AmazonSQSMessageProvider(sqs, queueUrl, waitTimeSeconds));
             }
         } catch (AmazonClientException e) {
             LOG.error("An error occurred while listing SQS queues: {}", e);

@@ -49,7 +49,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
         // return an empty list
         when(amazonSQS.listQueues(any(ListQueuesRequest.class))).thenReturn(new ListQueuesResult());
 
-        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 10 * 1000);
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 1, 10 * 1000);
         List<Message> empty = provider.next();
         Assert.assertEquals(0, empty.size());
 
@@ -68,7 +68,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
         when(amazonSQS.receiveMessage(any(ReceiveMessageRequest.class)))
                 .thenReturn(new ReceiveMessageResult().withMessages(newMessage("foo"), newMessage("foo"), newMessage("foo")));
 
-        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 60 * 1000);
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 1, 60 * 1000);
         List<Message> messages = provider.next();
         assertMessages(messages, 3, "foo");
 
@@ -121,7 +121,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
                 });
 
         // verify the order of next objects by counting the number of messages we return
-        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", TimeUnit.MINUTES.toMillis(30));
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 1, TimeUnit.MINUTES.toMillis(30));
 
         // for queues with messages, 1 receive returns messages, 1 receive returns none and removes the provider
         assertMessages(provider.next(), 3, "A");
@@ -177,7 +177,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
                 3 * intervalNs + 2                 // no update
         ).iterator();
 
-        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", TimeUnit.NANOSECONDS.toMillis(intervalNs)) {
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 1, TimeUnit.NANOSECONDS.toMillis(intervalNs)) {
             @Override
             public long currentNanoTime() {
                 return time.next();
@@ -233,7 +233,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
                     }
                 });
 
-        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 0)
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 1, 0)
                 .withInclude(new Predicate<String>() {
                     @Override
                     public boolean apply(String input) {
@@ -278,7 +278,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
                     }
                 });
 
-        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 0)
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 1, 0)
                 .withQueueComparator(new Comparator<String>() {
                     @Override
                     public int compare(String s1, String s2) {
@@ -324,7 +324,7 @@ public class AmazonSQSPrioritizedMessageProviderTest {
                     }
                 });
 
-        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 0)
+        AmazonSQSPrioritizedMessageProvider provider = new AmazonSQSPrioritizedMessageProvider(amazonSQS, "test", 1, 0)
                 .withQueueComparator(new Comparator<String>() {
                     @Override
                     public int compare(String s1, String s2) {
