@@ -40,14 +40,16 @@ public class AmazonSQSMessageProvider implements MessageProvider {
 
     private AmazonSQS sqs;
     private String queueUrl;
+    private int waitTimeSeconds;
 
     /**
      * Create a new MessageProvider instance.
      *
-     * @param sqs      AmazonSQS instance to use for communicating with AWS
-     * @param queueUrl target queue to pull Message instances from
+     * @param sqs             AmazonSQS instance to use for communicating with AWS
+     * @param queueUrl        target queue to pull Message instances from
+     * @param waitTimeSeconds to pass along to {@link ReceiveMessageRequest#withWaitTimeSeconds(Integer)}
      */
-    public AmazonSQSMessageProvider(AmazonSQS sqs, String queueUrl) {
+    public AmazonSQSMessageProvider(AmazonSQS sqs, String queueUrl, int waitTimeSeconds) {
         this.sqs = sqs;
         this.queueUrl = queueUrl;
     }
@@ -67,7 +69,8 @@ public class AmazonSQSMessageProvider implements MessageProvider {
             // receive messages from SQS
             ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl)
                     .withAttributeNames("SentTimestamp", "ApproximateReceiveCount")
-                    .withMaxNumberOfMessages(10);
+                    .withMaxNumberOfMessages(10)
+                    .withWaitTimeSeconds(waitTimeSeconds);
             List<com.amazonaws.services.sqs.model.Message> sqsMessages = sqs.receiveMessage(receiveMessageRequest).getMessages();
             return Lists.transform(sqsMessages, new Function<com.amazonaws.services.sqs.model.Message, Message>() {
                 @Override
