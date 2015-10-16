@@ -4,8 +4,7 @@ queue-slayer
 ============
 A micro pattern for thread-parallelized processing of messages off of a queue.
 
-<img src="https://travis-ci.org/blacklocus/queue-slayer.svg?branch=master"/>
-
+[![Build Status](https://travis-ci.org/blacklocus/queue-slayer.svg?branch=passthru-wait-time-sqs)](https://travis-ci.org/blacklocus/queue-slayer)
 
 
 ## Usage ##
