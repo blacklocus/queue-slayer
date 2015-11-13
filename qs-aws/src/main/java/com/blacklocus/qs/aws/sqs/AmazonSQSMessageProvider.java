@@ -52,6 +52,7 @@ public class AmazonSQSMessageProvider implements MessageProvider {
     public AmazonSQSMessageProvider(AmazonSQS sqs, String queueUrl, int waitTimeSeconds) {
         this.sqs = sqs;
         this.queueUrl = queueUrl;
+        this.waitTimeSeconds = waitTimeSeconds;
     }
 
     /**
