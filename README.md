@@ -16,10 +16,10 @@ repositories {
 
 dependencies {
 
-    compile 'com.blacklocus.queue-slayer:qs-core:0.4.0'
+    compile 'com.blacklocus.queue-slayer:qs-core:0.5.1'
 
     // for AWS SQS message providers
-    compile 'com.blacklocus.queue-slayer:qs-aws:0.4.0'
+    compile 'com.blacklocus.queue-slayer:qs-aws:0.5.1'
 }
 ```
 
