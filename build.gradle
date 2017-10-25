@@ -134,7 +134,7 @@ subprojects {
     }
 
     signing {
-        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+        required { isReleaseVersion && (gradle.taskGraph.hasTask('uploadArchives') || gradle.taskGraph.hasTask(':uploadArchives')) }
         sign configurations.archives
     }
 
@@ -142,13 +142,11 @@ subprojects {
         repositories.mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-            //# ./gradlew -PdeployUrl=http://server/artifactory/repo -PdeployUsername=admin -PdeployPassword=pass uploadArchives
+            //# ./gradlew -PdeployUrl=http://server/artifactory/repo -PdeployUser=admin -PdeployPass=pass uploadArchives
+            // for snapshots https://oss.sonatype.org/content/repositories/snapshots
+            // for staging/release https://oss.sonatype.org/service/local/staging/deploy/maven2
             repository(
                     url: defaultBlank({ deployUrl })
-                    // for snapshots
-//                url: "https://oss.sonatype.org/content/repositories/snapshots/"
-                    // for staging/release
-//                url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
             ) {
                 // If these are not defined assemble needlessly fails for unrelated tasks.
                 authentication(userName: defaultBlank({ deployUser }), password: defaultBlank({ deployPass }))
