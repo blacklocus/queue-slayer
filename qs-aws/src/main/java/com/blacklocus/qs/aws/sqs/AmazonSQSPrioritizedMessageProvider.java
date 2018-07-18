@@ -231,7 +231,7 @@ public class AmazonSQSPrioritizedMessageProvider implements MessageProvider {
     /**
      * Wrap a {@link Message} and tack on the originating queue url.
      */
-    class OriginatingMessage implements Message {
+    public class OriginatingMessage implements Message {
 
         private String originatingQueueUrl;
         private Message message;
